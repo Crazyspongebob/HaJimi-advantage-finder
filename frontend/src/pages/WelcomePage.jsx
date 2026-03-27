@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useChatContext, ActionTypes } from '../context/ChatContext'
+import { useDemoMode } from '../context/DemoModeContext'
 import { hakimiQuotes } from '../utils/mockData'
 
 // SVG cat silhouette fallback
@@ -33,6 +34,7 @@ function CatSilhouette() {
 function WelcomePage() {
   const navigate = useNavigate()
   const { dispatch } = useChatContext()
+  const { isDemoMode, toggleDemoMode, resetDemo } = useDemoMode()
   const [quote] = useState(() => {
     const idx = Math.floor(Math.random() * hakimiQuotes.length)
     return hakimiQuotes[idx]
@@ -41,6 +43,13 @@ function WelcomePage() {
   const [catImgLoaded, setCatImgLoaded] = useState(false)
 
   const handleStart = () => {
+    dispatch({ type: ActionTypes.RESET_SESSION })
+    navigate('/chat')
+  }
+
+  const handleStartDemo = () => {
+    if (!isDemoMode) toggleDemoMode()
+    resetDemo()
     dispatch({ type: ActionTypes.RESET_SESSION })
     navigate('/chat')
   }
@@ -104,14 +113,24 @@ function WelcomePage() {
             </div>
 
             {/* CTA */}
-            <button
-              onClick={handleStart}
-              className="btn-gold font-bold text-base px-10 py-4 rounded-full inline-flex items-center gap-3 group"
-              style={{ color: '#0F172A' }}
-            >
-              <span>开始探索</span>
-              <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 items-center lg:items-start">
+              <button
+                onClick={handleStart}
+                className="btn-gold font-bold text-base px-10 py-4 rounded-full inline-flex items-center gap-3 group"
+                style={{ color: '#0F172A' }}
+              >
+                <span>开始探索</span>
+                <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+              </button>
+              <button
+                onClick={handleStartDemo}
+                className="font-semibold text-sm px-7 py-4 rounded-full inline-flex items-center gap-2 transition-all hover:scale-105"
+                style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.3)', color: '#a78bfa' }}
+              >
+                <span>🎭</span>
+                <span>体验演示</span>
+              </button>
+            </div>
 
             {/* Feature chips */}
             <div className="flex flex-wrap justify-center lg:justify-start gap-3 mt-8">

@@ -42,15 +42,28 @@ function extractJSON(content) {
 
 const VALID_DOMAINS = ['executing', 'influencing', 'relationship', 'strategic'];
 
+// Fallback talent bank for padding when AI returns fewer than 5 themes
+const FALLBACK_TALENTS = [
+  { nameZh: '学习', nameEn: 'Learner', domain: 'strategic', tagline: '持续成长的渴望' },
+  { nameZh: '积极', nameEn: 'Positivity', domain: 'relationship', tagline: '感染他人的乐观能量' },
+  { nameZh: '专注', nameEn: 'Focus', domain: 'executing', tagline: '锁定目标的激光准心' },
+  { nameZh: '交往', nameEn: 'Woo', domain: 'influencing', tagline: '化陌生人为朋友的天赋' },
+  { nameZh: '前瞻', nameEn: 'Futuristic', domain: 'strategic', tagline: '未来图景的描绘者' },
+];
+
+// Score bands per rank (enforces differentiation)
+const SCORE_BANDS = [[90, 95], [84, 89], [78, 83], [72, 77], [66, 71]];
+
 /**
  * 规范化三层报告结构
  * 同时兼容旧版 topTalents 格式（向后兼容）
+ * 强制恰好 5 个才干，分数有区分度
  */
 function normalizeReport(raw) {
   // 兼容旧格式：topTalents → themes
   const rawThemes = raw.themes || raw.topTalents || [];
 
-  const themes = rawThemes.map((t, i) => ({
+  let themes = rawThemes.map((t, i) => ({
     rank: t.rank || i + 1,
     nameZh: t.nameZh || t.name || `才干${i + 1}`,
     nameEn: t.nameEn || t.englishName || '',
@@ -67,6 +80,30 @@ function normalizeReport(raw) {
     },
   }));
 
+  // Sort by score descending
+  themes.sort((a, b) => b.score - a.score);
+
+  // Truncate to max 5
+  themes = themes.slice(0, 5);
+
+  // Pad to exactly 5 using fallback talents
+  while (themes.length < 5) {
+    const fb = FALLBACK_TALENTS[themes.length % FALLBACK_TALENTS.length];
+    themes.push({
+      rank: themes.length + 1,
+      nameZh: fb.nameZh, nameEn: fb.nameEn, domain: fb.domain,
+      tagline: fb.tagline, description: '', evidence: '', score: 66,
+      toolkit: { strength: '', blindspot: '', action: '', hakimiQuote: '喵~ 这个才干也很棒！🐾' },
+    });
+  }
+
+  // Enforce rank order and score band differentiation
+  themes = themes.map((t, i) => {
+    const [lo, hi] = SCORE_BANDS[i];
+    const scoreClamped = Math.min(hi, Math.max(lo, t.score));
+    return { ...t, rank: i + 1, score: scoreClamped };
+  });
+
   const rawScores = raw.domainScores || {};
   const domainScores = {
     executing: clamp(rawScores.executing ?? rawScores.execution ?? 0),
@@ -74,6 +111,13 @@ function normalizeReport(raw) {
     relationship: clamp(rawScores.relationship ?? 0),
     strategic: clamp(rawScores.strategic ?? 0),
   };
+
+  // Ensure domainScores are non-zero if we have themes in those domains
+  for (const domain of VALID_DOMAINS) {
+    if (domainScores[domain] === 0 && themes.some(t => t.domain === domain)) {
+      domainScores[domain] = 40;
+    }
+  }
 
   const rawNarr = raw.domainNarrative || {};
   const domainNarrative = {
@@ -89,6 +133,8 @@ function normalizeReport(raw) {
     domainNarrative,
     summary: raw.summary || '',
     hakimiVerdict: raw.hakimiVerdict || raw.summary || '喵~ 你很棒！🐾',
+    talentDNA: raw.talentDNA || '',
+    crossDomainInsight: raw.crossDomainInsight || '',
     // backward-compat alias
     topTalents: themes,
   };

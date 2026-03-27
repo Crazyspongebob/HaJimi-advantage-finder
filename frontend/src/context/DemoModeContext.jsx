@@ -20,11 +20,27 @@ export function DemoModeProvider({ children }) {
   /**
    * 获取下一条演示回复
    * roundIndex 0 = greeting，1-N = user replies
+   * 超出范围后返回"演示已结束"存根，不重复最后一条
    */
   function getNextDemoResponse() {
     const idx = demoRoundRef.current
-    const entry = demoConversation[Math.min(idx, demoConversation.length - 1)]
-    demoRoundRef.current = Math.min(idx + 1, demoConversation.length - 1)
+    // Past end of demo — return graceful "demo ended" stub
+    if (idx >= demoConversation.length) {
+      return {
+        sessionId: 'demo-session-001',
+        reply: '喵~ 演示对话已结束！点击下方「立即查看结果」查看你的专属才干报告吧~ 🐾',
+        isComplete: true,
+        readyForReport: true,
+        autoPromptReport: true,
+        roundCount: demoConversation.length,
+        mode: 'A',
+        currentTheme: null,
+        skipDetected: false,
+        progress: { execution: 75, influence: 60, relationship: 70, strategic: 65 },
+      }
+    }
+    const entry = demoConversation[idx]
+    demoRoundRef.current = idx + 1  // No clamping — allow going past end
     setDemoRound(demoRoundRef.current)
     return entry
   }
@@ -34,7 +50,8 @@ export function DemoModeProvider({ children }) {
     setDemoRound(0)
   }
 
-  const isDemoComplete = demoRound >= demoConversation.length - 1
+  // isDemoComplete = true once we've consumed all demo entries
+  const isDemoComplete = demoRound >= demoConversation.length
 
   const getMockData = (type) => {
     if (type === 'fullAnalysis') return demoFullAnalysis

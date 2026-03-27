@@ -18,9 +18,9 @@ cd backend && npm install && npm run dev
 cd frontend && npm install && npm run dev
 ```
 
-### 4. 打开浏览器
+### 4. 打开浏览器  前端是3004，后端是5175
 ```
-http://localhost:3000
+http://localhost:3004
 ```
 
 ## 演示模式
@@ -28,7 +28,8 @@ http://localhost:3000
 
 ## 切换 LLM 模型
 在 `backend/.env` 中修改 `LLM_PROVIDER`:
-- `kimi` (月之暗面 Kimi-K2.5)
-- `glm-4.7-flash` (智谱 GLM 快速版，推荐)
-- `glm-4.7` / `glm-5` (智谱 GLM 标准版)
-- `minimax-m2.5` / `minimax-m2.7` (MiniMax)
+- `kimi-k2.5` (AIping)
+
+- `glm-4.7` /  (zai)
+- `minimax-m2.5` / `glm-5` / 'glm-4.7-flash' (AIping)
+- `glm-4.5-air` (zai)

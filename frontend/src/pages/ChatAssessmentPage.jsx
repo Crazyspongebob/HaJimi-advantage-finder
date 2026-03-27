@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useChatContext, ActionTypes } from '../context/ChatContext'
+import { useDemoMode } from '../context/DemoModeContext'
 import { useApi } from '../hooks/useApi'
 import CatAvatar from '../components/CatAvatar'
 import TypingIndicator from '../components/TypingIndicator'
@@ -140,6 +141,7 @@ function ActionButtons({ onKeepChatting, onViewResults, isGenerating, disabled }
 export default function ChatAssessmentPage() {
   const navigate = useNavigate()
   const { state, dispatch } = useChatContext()
+  const { isDemoMode, toggleDemoMode, isDemoComplete, resetDemo } = useDemoMode()
   const { sendMessage, submitScaleAnswer, analyzeResults, synthesizeSpeech } = useApi()
 
   const [inputValue, setInputValue] = useState('')
@@ -155,6 +157,13 @@ export default function ChatAssessmentPage() {
   const scrollToBottom = useCallback(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [])
   useEffect(() => { scrollToBottom() }, [state.messages, isTyping, pendingScale, showActionButtons, scrollToBottom])
   useEffect(() => { if (state.messages.length === 0) initSession() }, []) // eslint-disable-line
+
+  // Auto-show action buttons when demo completes
+  useEffect(() => {
+    if (isDemoMode && isDemoComplete) {
+      setShowActionButtons(true)
+    }
+  }, [isDemoMode, isDemoComplete])
 
   // Compute avatar state
   const avatarState = isTyping ? 'thinking' : (_audio ? 'speaking' : 'idle')
@@ -275,17 +284,33 @@ export default function ChatAssessmentPage() {
 
         {/* ── Header ─────────────────────────────────────────── */}
         <header className="flex-shrink-0 px-4 py-3 flex items-center gap-3"
-          style={{ background: '#0F172A', borderBottom: '1px solid rgba(201,168,76,0.15)' }}>
+          style={{ background: '#0F172A', borderBottom: isDemoMode ? '1px solid rgba(139,92,246,0.3)' : '1px solid rgba(201,168,76,0.15)' }}>
           <CatAvatar size="sm" avatarState={avatarState} />
           <div className="flex-1 min-w-0">
-            <h1 className="font-bold text-sm sm:text-base truncate" style={{ color: '#FAFAF8', fontFamily: "'Noto Serif SC', serif" }}>哈基米优势发现器</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="font-bold text-sm sm:text-base truncate" style={{ color: '#FAFAF8', fontFamily: "'Noto Serif SC', serif" }}>哈基米优势发现器</h1>
+              {isDemoMode && (
+                <span className="text-xs px-2 py-0.5 rounded-full font-semibold flex-shrink-0"
+                  style={{ background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.3)', color: '#a78bfa' }}>
+                  🎭 演示
+                </span>
+              )}
+            </div>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs" style={{ color: 'rgba(201,168,76,0.6)' }}>{assessmentMode === 'B' ? '量表精准校准' : '才干闲聊探测'}</span>
               {currentThemeZh && <ModeTag mode={assessmentMode} themeZh={currentThemeZh} />}
               {roundCount > 1 && <RoundDots count={roundCount} />}
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {/* Demo mode toggle */}
+            <button
+              onClick={() => { resetDemo(); toggleDemoMode(); if (isDemoMode) { dispatch({ type: ActionTypes.RESET_SESSION }); setTimeout(initSession, 50) } }}
+              title={isDemoMode ? '退出演示模式' : '开启演示模式（无需后端）'}
+              className="w-8 h-8 rounded-full flex items-center justify-center transition-all text-sm"
+              style={{ background: isDemoMode ? 'rgba(139,92,246,0.2)' : 'rgba(255,255,255,0.04)', border: isDemoMode ? '1px solid rgba(139,92,246,0.4)' : '1px solid rgba(255,255,255,0.08)' }}>
+              🎭
+            </button>
             <button onClick={() => dispatch({ type: ActionTypes.TOGGLE_VOICE })}
               title={voiceEnabled ? '关闭语音播报' : '开启语音播报'}
               className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
@@ -302,6 +327,22 @@ export default function ChatAssessmentPage() {
             </div>
           </div>
         </header>
+
+        {/* ── Demo Mode Banner ───────────────────────────────── */}
+        {isDemoMode && (
+          <div className="flex-shrink-0 flex items-center justify-between px-4 py-2"
+            style={{ background: 'rgba(139,92,246,0.08)', borderBottom: '1px solid rgba(139,92,246,0.15)' }}>
+            <span className="text-xs" style={{ color: '#a78bfa' }}>
+              🎭 演示模式 — 对话与报告均为模拟数据，无需配置后端
+            </span>
+            <button
+              onClick={() => { resetDemo(); toggleDemoMode(); dispatch({ type: ActionTypes.RESET_SESSION }) }}
+              className="text-xs px-2 py-0.5 rounded"
+              style={{ color: 'rgba(167,139,250,0.6)', border: '1px solid rgba(167,139,250,0.2)' }}>
+              退出
+            </button>
+          </div>
+        )}
 
         {/* ── Messages ───────────────────────────────────────── */}
         <div className="flex-1 overflow-y-auto px-4 py-5 space-y-4" style={{ background: '#F7F5F0' }}>

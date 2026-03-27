@@ -1,13 +1,13 @@
 {
-  "d7288d4c-0cb1-4b55-bb53-2b764dcc2f24": {
-    "sessionId": "d7288d4c-0cb1-4b55-bb53-2b764dcc2f24",
-    "createdAt": "2026-03-27T11:20:33.718Z",
-    "updatedAt": "2026-03-27T11:20:33.719Z",
+  "91f9c298-237a-436d-9430-6c8a599517c3": {
+    "sessionId": "91f9c298-237a-436d-9430-6c8a599517c3",
+    "createdAt": "2026-03-27T14:16:25.887Z",
+    "updatedAt": "2026-03-27T14:16:25.890Z",
     "messages": [
       {
         "role": "assistant",
         "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱\n\n我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~\n\n咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！\n\n先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~",
-        "timestamp": "2026-03-27T11:20:33.719Z"
+        "timestamp": "2026-03-27T14:16:25.890Z"
       }
     ],
     "progress": {
@@ -67,15 +67,15 @@
       "lastSkipped": null
     }
   },
-  "2e11accc-8668-4e02-a5b5-6c4ecda48f48": {
-    "sessionId": "2e11accc-8668-4e02-a5b5-6c4ecda48f48",
-    "createdAt": "2026-03-27T11:20:33.721Z",
-    "updatedAt": "2026-03-27T11:20:33.721Z",
+  "49391048-0f9e-4d5f-9b6e-2f75bb558c0f": {
+    "sessionId": "49391048-0f9e-4d5f-9b6e-2f75bb558c0f",
+    "createdAt": "2026-03-27T14:16:25.894Z",
+    "updatedAt": "2026-03-27T14:16:25.894Z",
     "messages": [
       {
         "role": "assistant",
         "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱\n\n我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~\n\n咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！\n\n先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~",
-        "timestamp": "2026-03-27T11:20:33.721Z"
+        "timestamp": "2026-03-27T14:16:25.894Z"
       }
     ],
     "progress": {
@@ -135,15 +135,15 @@
       "lastSkipped": null
     }
   },
-  "8819491d-8dd5-40d5-b5fc-33b2ae414bb9": {
-    "sessionId": "8819491d-8dd5-40d5-b5fc-33b2ae414bb9",
-    "createdAt": "2026-03-27T11:25:18.595Z",
-    "updatedAt": "2026-03-27T11:25:18.597Z",
+  "c163f7ea-06a0-4419-9a08-d148ca94f70b": {
+    "sessionId": "c163f7ea-06a0-4419-9a08-d148ca94f70b",
+    "createdAt": "2026-03-27T14:20:11.916Z",
+    "updatedAt": "2026-03-27T14:20:11.918Z",
     "messages": [
       {
         "role": "assistant",
         "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱\n\n我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~\n\n咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！\n\n先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~",
-        "timestamp": "2026-03-27T11:25:18.597Z"
+        "timestamp": "2026-03-27T14:20:11.917Z"
       }
     ],
     "progress": {
@@ -203,117 +203,15 @@
       "lastSkipped": null
     }
   },
-  "b6c1e674-d57e-4849-bdbc-5666fe35122b": {
-    "sessionId": "b6c1e674-d57e-4849-bdbc-5666fe35122b",
-    "createdAt": "2026-03-27T11:25:18.598Z",
-    "updatedAt": "2026-03-27T11:25:54.343Z",
+  "6366bcd0-5809-4d1e-a9ac-7b637e341a26": {
+    "sessionId": "6366bcd0-5809-4d1e-a9ac-7b637e341a26",
+    "createdAt": "2026-03-27T14:20:11.925Z",
+    "updatedAt": "2026-03-27T14:20:11.925Z",
     "messages": [
       {
         "role": "assistant",
         "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱\n\n我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~\n\n咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！\n\n先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~",
-        "timestamp": "2026-03-27T11:25:18.599Z"
-      },
-      {
-        "role": "user",
-        "content": "我是研究生",
-        "timestamp": "2026-03-27T11:25:39.219Z"
-      },
-      {
-        "role": "user",
-        "content": "__switch_to_scale__",
-        "timestamp": "2026-03-27T11:25:43.035Z"
-      },
-      {
-        "role": "user",
-        "content": "换一个",
-        "timestamp": "2026-03-27T11:25:46.271Z"
-      },
-      {
-        "role": "assistant",
-        "content": "好的，咱们换个话题~ 喵~ “小组群里大家为了一个方案吵了三小时没结论，你会不会直接在群里发一条：‘听我的，现在定A方案，出了问题我负责，散会！’？”",
-        "timestamp": "2026-03-27T11:25:46.274Z"
-      },
-      {
-        "role": "user",
-        "content": "__switch_to_scale__",
-        "timestamp": "2026-03-27T11:25:54.339Z"
-      }
-    ],
-    "progress": {
-      "execution": 0,
-      "influence": 0,
-      "relationship": 0,
-      "strategic": 0
-    },
-    "isComplete": false,
-    "results": null,
-    "jobs": null,
-    "assessmentState": {
-      "mode": "A",
-      "themeOrder": [
-        "Achiever",
-        "Command",
-        "Adaptability",
-        "Analytical",
-        "Arranger",
-        "Communication",
-        "Connectedness",
-        "Context",
-        "Belief",
-        "Competition",
-        "Developer",
-        "Deliberative",
-        "Consistency",
-        "Activator",
-        "Empathy",
-        "Focus",
-        "Discipline",
-        "Maximizer",
-        "Harmony",
-        "Futuristic",
-        "Responsibility",
-        "Significance",
-        "Includer",
-        "Ideation",
-        "Restorative",
-        "Self_Assurance",
-        "Individualization",
-        "Input",
-        "Strategic",
-        "Woo",
-        "Positivity",
-        "Intellection",
-        "Relator",
-        "Learner"
-      ],
-      "themeIndex": 1,
-      "currentTheme": "Command",
-      "seedIndex": 1,
-      "consecutiveSingleReplies": 0,
-      "scaleAnswers": {},
-      "signalTags": [
-        {
-          "theme": "Achiever",
-          "signal": "skip",
-          "weight": -1
-        }
-      ],
-      "conversationSummary": "",
-      "lastSkipped": "2026-03-27T11:25:46.272Z",
-      "roundCount": 0,
-      "confirmedThemes": [],
-      "signalScores": {}
-    }
-  },
-  "9a4de99b-1ed4-4edf-b553-082f8dc092be": {
-    "sessionId": "9a4de99b-1ed4-4edf-b553-082f8dc092be",
-    "createdAt": "2026-03-27T11:26:06.661Z",
-    "updatedAt": "2026-03-27T11:26:06.663Z",
-    "messages": [
-      {
-        "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱\n\n我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~\n\n咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！\n\n先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~",
-        "timestamp": "2026-03-27T11:26:06.663Z"
+        "timestamp": "2026-03-27T14:20:11.925Z"
       }
     ],
     "progress": {
@@ -371,82 +269,6 @@
       "signalTags": [],
       "conversationSummary": "",
       "lastSkipped": null
-    }
-  },
-  "ef7f85bb-2a71-49bf-b9de-85a3c886c64e": {
-    "sessionId": "ef7f85bb-2a71-49bf-b9de-85a3c886c64e",
-    "createdAt": "2026-03-27T11:26:06.671Z",
-    "updatedAt": "2026-03-27T11:26:19.469Z",
-    "messages": [
-      {
-        "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱\n\n我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~\n\n咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！\n\n先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~",
-        "timestamp": "2026-03-27T11:26:06.672Z"
-      },
-      {
-        "role": "user",
-        "content": "我是本科生",
-        "timestamp": "2026-03-27T11:26:19.465Z"
-      }
-    ],
-    "progress": {
-      "execution": 0,
-      "influence": 0,
-      "relationship": 0,
-      "strategic": 0
-    },
-    "isComplete": false,
-    "results": null,
-    "jobs": null,
-    "assessmentState": {
-      "mode": "A",
-      "themeOrder": [
-        "Achiever",
-        "Command",
-        "Adaptability",
-        "Analytical",
-        "Arranger",
-        "Communication",
-        "Connectedness",
-        "Context",
-        "Belief",
-        "Competition",
-        "Developer",
-        "Deliberative",
-        "Consistency",
-        "Activator",
-        "Empathy",
-        "Focus",
-        "Discipline",
-        "Maximizer",
-        "Harmony",
-        "Futuristic",
-        "Responsibility",
-        "Significance",
-        "Includer",
-        "Ideation",
-        "Restorative",
-        "Self_Assurance",
-        "Individualization",
-        "Input",
-        "Strategic",
-        "Woo",
-        "Positivity",
-        "Intellection",
-        "Relator",
-        "Learner"
-      ],
-      "themeIndex": 0,
-      "currentTheme": "Achiever",
-      "seedIndex": 1,
-      "consecutiveSingleReplies": 0,
-      "scaleAnswers": {},
-      "signalTags": [],
-      "conversationSummary": "",
-      "lastSkipped": null,
-      "roundCount": 0,
-      "confirmedThemes": [],
-      "signalScores": {}
     }
   }
 }
