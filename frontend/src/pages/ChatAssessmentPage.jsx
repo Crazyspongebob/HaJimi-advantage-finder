@@ -1,5 +1,4 @@
-// 聊天评估页 - 哈基米才干探测对话
-// Mode A (闲聊) + Mode B (量表) + 语音输入/TTS + 跳过逻辑
+// 聊天评估页 - 信号感知对话 + 双行动按钮 + 大头像 + Demo模式
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useChatContext, ActionTypes } from '../context/ChatContext'
@@ -10,6 +9,7 @@ import VoiceButton from '../components/VoiceButton'
 import LikertScaleCard from '../components/LikertScaleCard'
 
 const ERROR_MSG = '哈基米猫粮吃撑了，正在打嗝，稍等喵~ 😅'
+const MIN_ROUNDS_SHOW_BUTTONS = 5  // 第5轮起显示行动按钮
 
 let _audio = null
 function playAudio(url) {
@@ -18,6 +18,8 @@ function playAudio(url) {
   _audio.play().catch(() => {})
   _audio.onended = () => { _audio = null }
 }
+
+// ── 小组件 ───────────────────────────────────────────────────
 
 function ModeTag({ mode, themeZh }) {
   if (!themeZh) return null
@@ -34,6 +36,21 @@ function ModeTag({ mode, themeZh }) {
   )
 }
 
+/** 轮次进度点（最多显示5个） */
+function RoundDots({ count }) {
+  const MAX = 5
+  if (count <= 0) return null
+  return (
+    <div className="flex items-center gap-1" title={`已进行 ${count} 轮对话`}>
+      {Array.from({ length: MAX }).map((_, i) => (
+        <span key={i} className="w-1.5 h-1.5 rounded-full transition-all duration-500"
+          style={{ background: i < count ? '#C9A84C' : 'rgba(255,255,255,0.15)' }} />
+      ))}
+      {count > MAX && <span className="text-xs ml-0.5" style={{ color: 'rgba(201,168,76,0.6)' }}>+{count - MAX}</span>}
+    </div>
+  )
+}
+
 function MessageBubble({ message, onTTS }) {
   const isUser = message.role === 'user'
   const [ttsLoading, setTtsLoading] = useState(false)
@@ -43,8 +60,8 @@ function MessageBubble({ message, onTTS }) {
     setTtsLoading(false)
   }
   return (
-    <div className={`flex items-end gap-2 message-bubble ${isUser ? 'flex-row-reverse' : ''}`}>
-      {!isUser && <CatAvatar size="sm" className="flex-shrink-0" />}
+    <div className={`flex items-end gap-3 message-bubble ${isUser ? 'flex-row-reverse' : ''}`}>
+      {!isUser && <CatAvatar size="sm" className="flex-shrink-0 mb-1" />}
       <div className={`max-w-xs sm:max-w-md lg:max-w-lg group flex flex-col gap-1 ${isUser ? 'items-end' : 'items-start'}`}>
         {message.skipDetected && (
           <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(201,168,76,0.1)', color: 'rgba(201,168,76,0.7)' }}>话题已跳过</span>
@@ -79,6 +96,47 @@ function MessageBubble({ message, onTTS }) {
   )
 }
 
+/** 两个主行动按钮：继续聊天 + 立即查看结果 */
+function ActionButtons({ onKeepChatting, onViewResults, isGenerating, disabled }) {
+  return (
+    <div className="mx-4 mb-3 p-4 rounded-2xl animate-slideUp" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)' }}>
+      <p className="text-xs text-center mb-3 font-medium" style={{ color: '#C9A84C' }}>
+        🐾 哈基米已掌握足够的信号！
+      </p>
+      <div className="flex gap-3">
+        <button
+          onClick={onKeepChatting}
+          disabled={disabled}
+          className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-105"
+          style={{
+            background: 'transparent',
+            border: '1px solid rgba(201,168,76,0.35)',
+            color: '#9B7A1F',
+            cursor: disabled ? 'not-allowed' : 'pointer',
+          }}
+        >
+          继续聊天
+        </button>
+        <button
+          onClick={onViewResults}
+          disabled={isGenerating || disabled}
+          className="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105 flex items-center justify-center gap-1.5"
+          style={{
+            background: isGenerating ? 'rgba(201,168,76,0.4)' : 'linear-gradient(135deg, #C9A84C 0%, #D4B46A 50%, #B8960C 100%)',
+            color: '#0F172A',
+            boxShadow: isGenerating ? 'none' : '0 4px 12px rgba(201,168,76,0.3)',
+            cursor: (isGenerating || disabled) ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {isGenerating ? <><span className="animate-spin text-base">⏳</span><span>生成中...</span></> : '立即查看结果 →'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── 主组件 ───────────────────────────────────────────────────
+
 export default function ChatAssessmentPage() {
   const navigate = useNavigate()
   const { state, dispatch } = useChatContext()
@@ -89,12 +147,17 @@ export default function ChatAssessmentPage() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [pendingScale, setPendingScale] = useState(null)
   const [scaleSubmitting, setScaleSubmitting] = useState(false)
+  const [roundCount, setRoundCount] = useState(0)
+  const [showActionButtons, setShowActionButtons] = useState(false)
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
 
   const scrollToBottom = useCallback(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [])
-  useEffect(() => { scrollToBottom() }, [state.messages, isTyping, pendingScale, scrollToBottom])
+  useEffect(() => { scrollToBottom() }, [state.messages, isTyping, pendingScale, showActionButtons, scrollToBottom])
   useEffect(() => { if (state.messages.length === 0) initSession() }, []) // eslint-disable-line
+
+  // Compute avatar state
+  const avatarState = isTyping ? 'thinking' : (_audio ? 'speaking' : 'idle')
 
   function processResponse(data) {
     if (!data) return
@@ -110,6 +173,21 @@ export default function ChatAssessmentPage() {
     if (data.mode === 'B' && data.scaleQuestions?.length > 0) {
       setPendingScale({ questions: data.scaleQuestions, theme: data.currentTheme, themeZh: data.currentThemeZh || data.currentTheme })
     }
+
+    // Track round count
+    if (data.roundCount != null) {
+      setRoundCount(data.roundCount)
+    }
+
+    // Show action buttons when ready
+    if (data.readyForReport || data.isComplete || (data.roundCount >= MIN_ROUNDS_SHOW_BUTTONS)) {
+      setShowActionButtons(true)
+    }
+    // Demo: auto prompt
+    if (data.autoPromptReport) {
+      setShowActionButtons(true)
+    }
+
     if (data.isComplete) dispatch({ type: ActionTypes.SET_COMPLETE, payload: true })
     if (state.voiceEnabled && data.reply) handleTTSPlay(data.reply)
   }
@@ -141,6 +219,21 @@ export default function ChatAssessmentPage() {
     if (data) { dispatch({ type: ActionTypes.ADD_MESSAGE, payload: { role: 'assistant', content: data.reply, skipDetected: data.skipDetected } }); processResponse(data) }
   }
 
+  async function handleKeepChatting() {
+    setShowActionButtons(false)
+    dispatch({ type: ActionTypes.SET_COMPLETE, payload: false })
+    // Gently prod the AI to continue
+    await handleSend('我想继续聊，请继续问我')
+  }
+
+  async function handleGenerateReport() {
+    setIsGenerating(true); dispatch({ type: ActionTypes.SET_LOADING, payload: true })
+    const { data, error } = await analyzeResults(state.sessionId, state.messages)
+    setIsGenerating(false); dispatch({ type: ActionTypes.SET_LOADING, payload: false })
+    if (error) { dispatch({ type: ActionTypes.SET_ERROR, payload: error }); return }
+    if (data) { dispatch({ type: ActionTypes.SET_RESULTS, payload: data }); navigate('/results') }
+  }
+
   async function handleSkip() { await handleSend('换一个') }
 
   async function handleSwitchToScale() {
@@ -164,15 +257,6 @@ export default function ChatAssessmentPage() {
 
   async function handleScaleSkip() { setPendingScale(null); await handleSend('跳过') }
   function handleVoiceResult(text) { setInputValue(text); setTimeout(() => handleSend(text), 300) }
-
-  async function handleGenerateReport() {
-    setIsGenerating(true); dispatch({ type: ActionTypes.SET_LOADING, payload: true })
-    const { data, error } = await analyzeResults(state.sessionId, state.messages)
-    setIsGenerating(false); dispatch({ type: ActionTypes.SET_LOADING, payload: false })
-    if (error) { dispatch({ type: ActionTypes.SET_ERROR, payload: error }); return }
-    if (data) { dispatch({ type: ActionTypes.SET_RESULTS, payload: data }); navigate('/results') }
-  }
-
   function handleKeyDown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }
 
   const { progress, isComplete, assessmentMode, currentThemeZh, voiceEnabled } = state
@@ -183,20 +267,22 @@ export default function ChatAssessmentPage() {
     { key: 'strategic', label: '战略思维', value: progress.strategic },
   ]
   const inputDisabled = isTyping || isComplete || scaleSubmitting
+  const buttonsVisible = showActionButtons || isComplete
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: '#FAFAF8' }}>
       <div className="flex-1 flex flex-col min-w-0">
 
-        {/* Header */}
+        {/* ── Header ─────────────────────────────────────────── */}
         <header className="flex-shrink-0 px-4 py-3 flex items-center gap-3"
           style={{ background: '#0F172A', borderBottom: '1px solid rgba(201,168,76,0.15)' }}>
-          <CatAvatar size="sm" />
+          <CatAvatar size="sm" avatarState={avatarState} />
           <div className="flex-1 min-w-0">
             <h1 className="font-bold text-sm sm:text-base truncate" style={{ color: '#FAFAF8', fontFamily: "'Noto Serif SC', serif" }}>哈基米优势发现器</h1>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs" style={{ color: 'rgba(201,168,76,0.6)' }}>{assessmentMode === 'B' ? '量表精准校准' : '才干闲聊探测'}</span>
               {currentThemeZh && <ModeTag mode={assessmentMode} themeZh={currentThemeZh} />}
+              {roundCount > 1 && <RoundDots count={roundCount} />}
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -206,7 +292,8 @@ export default function ChatAssessmentPage() {
               style={{ background: voiceEnabled ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.06)', border: voiceEnabled ? '1px solid rgba(201,168,76,0.4)' : '1px solid rgba(255,255,255,0.1)', color: voiceEnabled ? '#C9A84C' : 'rgba(255,255,255,0.3)' }}>
               {voiceEnabled ? '🔊' : '🔇'}
             </button>
-            <div className="sm:hidden flex items-center gap-1.5">
+            {/* Mobile progress bars */}
+            <div className="sm:hidden flex items-center gap-1">
               {progressItems.map(item => (
                 <div key={item.key} className="relative w-1 h-6 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }} title={`${item.label}: ${item.value}%`}>
                   <div className="absolute bottom-0 left-0 right-0 rounded-full transition-all duration-500" style={{ height: `${item.value}%`, background: 'linear-gradient(to top, #C9A84C, #E2C97E)' }} />
@@ -216,7 +303,7 @@ export default function ChatAssessmentPage() {
           </div>
         </header>
 
-        {/* Messages */}
+        {/* ── Messages ───────────────────────────────────────── */}
         <div className="flex-1 overflow-y-auto px-4 py-5 space-y-4" style={{ background: '#F7F5F0' }}>
           {state.messages.map((message, index) => (
             <MessageBubble key={index} message={message} onTTS={handleTTSPlay} />
@@ -231,7 +318,7 @@ export default function ChatAssessmentPage() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Error */}
+        {/* ── Error ──────────────────────────────────────────── */}
         {state.error && (
           <div className="mx-4 mb-2 p-3 rounded-lg text-sm flex items-center gap-2"
             style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444' }}>
@@ -240,9 +327,19 @@ export default function ChatAssessmentPage() {
           </div>
         )}
 
-        {/* Input */}
+        {/* ── Action Buttons (persistent, above input) ───────── */}
+        {buttonsVisible && !pendingScale && (
+          <ActionButtons
+            onKeepChatting={handleKeepChatting}
+            onViewResults={handleGenerateReport}
+            isGenerating={isGenerating}
+            disabled={isTyping || scaleSubmitting}
+          />
+        )}
+
+        {/* ── Input ──────────────────────────────────────────── */}
         <div className="flex-shrink-0 px-4 py-3 pb-safe" style={{ background: '#FFFFFF', borderTop: '1px solid rgba(15,23,42,0.08)' }}>
-          {!isComplete && !pendingScale && state.messages.length > 2 && (
+          {!isComplete && !pendingScale && state.messages.length > 2 && !buttonsVisible && (
             <div className="flex justify-end gap-2 mb-2 flex-wrap">
               <button onClick={handleSkip} disabled={inputDisabled} className="text-xs px-3 py-1.5 rounded-full transition-all hover:scale-105"
                 style={{ background: 'rgba(15,23,42,0.05)', border: '1px solid rgba(15,23,42,0.1)', color: 'rgba(15,23,42,0.5)', cursor: inputDisabled ? 'not-allowed' : 'pointer' }}>
@@ -259,7 +356,7 @@ export default function ChatAssessmentPage() {
           <div className="flex items-end gap-2 max-w-2xl mx-auto">
             <VoiceButton onResult={handleVoiceResult} disabled={inputDisabled || !!pendingScale} />
             <textarea ref={inputRef} value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={handleKeyDown}
-              placeholder={pendingScale ? '请先完成量表评分...' : isComplete ? '对话已完成，可以生成报告了' : '和哈基米聊聊... 说「换一个」跳过话题'}
+              placeholder={pendingScale ? '请先完成量表评分...' : isComplete ? '对话已完成' : '和哈基米聊聊... 说「换一个」跳过话题'}
               disabled={inputDisabled} rows={1}
               className="flex-1 resize-none rounded-2xl px-4 py-2.5 text-sm focus:outline-none max-h-24 overflow-y-auto transition-all"
               style={{ minHeight: '44px', background: inputDisabled ? 'rgba(15,23,42,0.03)' : '#F7F5F0', border: '1px solid rgba(15,23,42,0.1)', color: '#1E293B', fontFamily: 'Inter, sans-serif' }}
@@ -284,79 +381,108 @@ export default function ChatAssessmentPage() {
         </div>
       </div>
 
-      {/* 右侧进度面板 */}
-      <aside className="hidden sm:flex flex-col w-72 p-5 flex-shrink-0"
+      {/* ── 右侧进度面板（桌面端） ──────────────────────────── */}
+      <aside className="hidden sm:flex flex-col w-72 flex-shrink-0"
         style={{ background: '#0F172A', borderLeft: '1px solid rgba(201,168,76,0.1)' }}>
-        <div className="flex items-center gap-2 mb-6">
-          <div className="w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold" style={{ background: 'linear-gradient(135deg, #C9A84C, #9B7A1F)', color: '#0F172A' }}>H</div>
-          <h2 className="font-semibold text-sm" style={{ color: '#FAFAF8', fontFamily: "'Noto Serif SC', serif" }}>才干探测进度</h2>
+
+        {/* 大头像区 */}
+        <div className="flex flex-col items-center pt-8 pb-6 px-5" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+          <CatAvatar size="lg" avatarState={avatarState} className="mb-4" />
+          <h2 className="font-bold text-base" style={{ color: '#FAFAF8', fontFamily: "'Noto Serif SC', serif" }}>哈基米</h2>
+          <p className="text-xs mt-0.5" style={{ color: 'rgba(201,168,76,0.6)' }}>
+            {avatarState === 'thinking' ? '正在思考...' : avatarState === 'speaking' ? '正在播报...' : '才干探测中'}
+          </p>
+          {roundCount > 0 && (
+            <div className="mt-3 flex items-center gap-1.5">
+              <span className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>第 {roundCount} 轮</span>
+              <RoundDots count={roundCount} />
+            </div>
+          )}
         </div>
-        {currentThemeZh && (
-          <div className="mb-5 px-3 py-2.5 rounded-xl" style={{ background: assessmentMode === 'B' ? 'rgba(139,92,246,0.08)' : 'rgba(201,168,76,0.06)', border: assessmentMode === 'B' ? '1px solid rgba(139,92,246,0.2)' : '1px solid rgba(201,168,76,0.15)' }}>
-            <p className="text-xs font-medium mb-0.5" style={{ color: assessmentMode === 'B' ? '#a78bfa' : '#C9A84C' }}>{assessmentMode === 'B' ? '量表精准校准' : '闲聊探测'}</p>
-            <p className="text-sm font-semibold" style={{ color: '#FAFAF8' }}>{currentThemeZh}</p>
+
+        <div className="flex-1 px-5 py-5">
+          <h3 className="text-xs font-semibold mb-4 uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.35)' }}>才干探测进度</h3>
+
+          {currentThemeZh && (
+            <div className="mb-5 px-3 py-2.5 rounded-xl" style={{ background: assessmentMode === 'B' ? 'rgba(139,92,246,0.08)' : 'rgba(201,168,76,0.06)', border: assessmentMode === 'B' ? '1px solid rgba(139,92,246,0.2)' : '1px solid rgba(201,168,76,0.15)' }}>
+              <p className="text-xs font-medium mb-0.5" style={{ color: assessmentMode === 'B' ? '#a78bfa' : '#C9A84C' }}>{assessmentMode === 'B' ? '量表精准校准' : '闲聊探测'}</p>
+              <p className="text-sm font-semibold" style={{ color: '#FAFAF8' }}>{currentThemeZh}</p>
+            </div>
+          )}
+
+          <div className="space-y-5">
+            {progressItems.map(item => (
+              <div key={item.key}>
+                <div className="flex justify-between items-center mb-1.5">
+                  <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.6)' }}>{item.label}</span>
+                  <span className="text-xs tabular-nums" style={{ color: item.value > 0 ? '#C9A84C' : 'rgba(255,255,255,0.3)' }}>{item.value}%</span>
+                </div>
+                <div className="h-0.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                  <div className="h-full rounded-full transition-all duration-700 ease-out" style={{ width: `${item.value}%`, background: 'linear-gradient(90deg, #C9A84C, #E2C97E)' }} />
+                </div>
+              </div>
+            ))}
           </div>
-        )}
-        <div className="space-y-5 flex-1">
-          {progressItems.map(item => (
-            <div key={item.key}>
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.6)' }}>{item.label}</span>
-                <span className="text-xs tabular-nums" style={{ color: item.value > 0 ? '#C9A84C' : 'rgba(255,255,255,0.3)' }}>{item.value}%</span>
-              </div>
-              <div className="h-0.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
-                <div className="h-full rounded-full transition-all duration-700 ease-out" style={{ width: `${item.value}%`, background: 'linear-gradient(90deg, #C9A84C, #E2C97E)' }} />
-              </div>
+
+          {/* 辅助操作按钮 */}
+          {!isComplete && state.messages.length > 2 && (
+            <div className="mt-5 space-y-1.5">
+              <button onClick={handleSkip} disabled={inputDisabled} className="w-full py-1.5 rounded-lg text-xs transition-all"
+                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)', cursor: inputDisabled ? 'not-allowed' : 'pointer' }}>
+                换个话题 →
+              </button>
+              {assessmentMode === 'A' && (
+                <button onClick={handleSwitchToScale} disabled={inputDisabled} className="w-full py-1.5 rounded-lg text-xs transition-all"
+                  style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.15)', color: '#a78bfa', cursor: inputDisabled ? 'not-allowed' : 'pointer' }}>
+                  切换量表模式
+                </button>
+              )}
             </div>
-          ))}
+          )}
         </div>
-        {isComplete ? (
-          <div className="mt-6 space-y-3">
-            <div className="p-3 rounded-xl text-center" style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}>
-              <p className="font-semibold text-sm" style={{ color: '#C9A84C' }}>探测完成</p>
-              <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>哈基米已充分了解你</p>
+
+        {/* 侧边栏行动按钮区 */}
+        {buttonsVisible && (
+          <div className="px-5 pb-6 space-y-2">
+            <div className="p-3 rounded-xl text-center" style={{ background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.2)' }}>
+              <p className="text-xs font-semibold" style={{ color: '#C9A84C' }}>探测完成 ✓</p>
+              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>哈基米已了解你</p>
             </div>
+            <button onClick={handleKeepChatting} disabled={isTyping}
+              className="w-full py-2 rounded-xl text-xs font-semibold transition-all"
+              style={{ background: 'transparent', border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', cursor: isTyping ? 'not-allowed' : 'pointer' }}>
+              继续聊天
+            </button>
             <button onClick={handleGenerateReport} disabled={isGenerating}
-              className="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all"
-              style={{ background: isGenerating ? 'rgba(201,168,76,0.4)' : 'linear-gradient(135deg, #C9A84C 0%, #D4B46A 50%, #B8960C 100%)', color: '#0F172A', boxShadow: isGenerating ? 'none' : '0 4px 15px rgba(201,168,76,0.3)' }}>
-              {isGenerating ? <><span className="animate-spin">⏳</span><span>生成中...</span></> : '生成才干报告'}
+              className="w-full py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all"
+              style={{ background: isGenerating ? 'rgba(201,168,76,0.4)' : 'linear-gradient(135deg, #C9A84C 0%, #D4B46A 50%, #B8960C 100%)', color: '#0F172A', boxShadow: isGenerating ? 'none' : '0 4px 15px rgba(201,168,76,0.3)', cursor: isGenerating ? 'not-allowed' : 'pointer' }}>
+              {isGenerating ? <><span className="animate-spin">⏳</span><span>生成中...</span></> : '查看才干报告'}
             </button>
           </div>
-        ) : (
-          <div className="mt-6 space-y-2">
-            <div className="p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <p className="text-xs text-center leading-relaxed" style={{ color: 'rgba(255,255,255,0.4)' }}>继续聊天，哈基米正在识别才干信号...</p>
-            </div>
-            {state.messages.length > 2 && (
-              <div className="space-y-1.5">
-                <button onClick={handleSkip} disabled={inputDisabled} className="w-full py-1.5 rounded-lg text-xs transition-all"
-                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)', cursor: inputDisabled ? 'not-allowed' : 'pointer' }}>
-                  换个话题 →
-                </button>
-                {assessmentMode === 'A' && (
-                  <button onClick={handleSwitchToScale} disabled={inputDisabled} className="w-full py-1.5 rounded-lg text-xs transition-all"
-                    style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.15)', color: '#a78bfa', cursor: inputDisabled ? 'not-allowed' : 'pointer' }}>
-                    切换量表模式
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
         )}
-        <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          <p className="text-xs text-center" style={{ color: 'rgba(255,255,255,0.2)' }}>盖洛普 34 才干 · 双模式探测<br />闲聊 + 量表 融合分析</p>
+
+        <div className="px-5 pb-4 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <p className="text-xs text-center" style={{ color: 'rgba(255,255,255,0.2)' }}>盖洛普 34 才干 · 双模式探测<br/>闲聊 + 量表 融合分析</p>
         </div>
       </aside>
 
-      {isComplete && (
+      {/* ── 移动端底部行动浮层 ────────────────────────────── */}
+      {buttonsVisible && (
         <div className="sm:hidden fixed bottom-20 left-0 right-0 px-4 z-40">
           <div className="rounded-2xl shadow-2xl p-4" style={{ background: '#0F172A', border: '1px solid rgba(201,168,76,0.25)' }}>
-            <p className="text-center font-semibold mb-3 text-sm" style={{ color: '#C9A84C' }}>探测完成！哈基米已了解你啦</p>
-            <button onClick={handleGenerateReport} disabled={isGenerating}
-              className="w-full py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
-              style={{ background: 'linear-gradient(135deg, #C9A84C 0%, #D4B46A 50%, #B8960C 100%)', color: '#0F172A', boxShadow: '0 4px 15px rgba(201,168,76,0.3)' }}>
-              {isGenerating ? '生成中...' : '生成才干报告'}
-            </button>
+            <p className="text-center font-semibold mb-3 text-sm" style={{ color: '#C9A84C' }}>🐾 哈基米已了解你啦！</p>
+            <div className="flex gap-2">
+              <button onClick={handleKeepChatting} disabled={isTyping}
+                className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                style={{ background: 'transparent', border: '1px solid rgba(201,168,76,0.35)', color: '#C9A84C' }}>
+                继续聊
+              </button>
+              <button onClick={handleGenerateReport} disabled={isGenerating}
+                className="flex-1 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-1.5"
+                style={{ background: 'linear-gradient(135deg, #C9A84C 0%, #D4B46A 50%, #B8960C 100%)', color: '#0F172A', boxShadow: '0 4px 15px rgba(201,168,76,0.3)' }}>
+                {isGenerating ? '生成中...' : '查看报告'}
+              </button>
+            </div>
           </div>
         </div>
       )}

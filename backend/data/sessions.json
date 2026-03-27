@@ -1,13 +1,13 @@
 {
-  "890b0982-68f9-4a2d-b05e-5742415ce615": {
-    "sessionId": "890b0982-68f9-4a2d-b05e-5742415ce615",
-    "createdAt": "2026-03-27T09:28:08.924Z",
-    "updatedAt": "2026-03-27T09:28:08.925Z",
+  "d7288d4c-0cb1-4b55-bb53-2b764dcc2f24": {
+    "sessionId": "d7288d4c-0cb1-4b55-bb53-2b764dcc2f24",
+    "createdAt": "2026-03-27T11:20:33.718Z",
+    "updatedAt": "2026-03-27T11:20:33.719Z",
     "messages": [
       {
         "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它。先说说，你一般在什么情况下会觉得时间过得特别快，完全沉浸其中的那种感觉？",
-        "timestamp": "2026-03-27T09:28:08.925Z"
+        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱\n\n我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~\n\n咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！\n\n先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~",
+        "timestamp": "2026-03-27T11:20:33.719Z"
       }
     ],
     "progress": {
@@ -18,17 +18,64 @@
     },
     "isComplete": false,
     "results": null,
-    "jobs": null
+    "jobs": null,
+    "assessmentState": {
+      "mode": "A",
+      "themeOrder": [
+        "Achiever",
+        "Command",
+        "Adaptability",
+        "Analytical",
+        "Arranger",
+        "Communication",
+        "Connectedness",
+        "Context",
+        "Belief",
+        "Competition",
+        "Developer",
+        "Deliberative",
+        "Consistency",
+        "Activator",
+        "Empathy",
+        "Focus",
+        "Discipline",
+        "Maximizer",
+        "Harmony",
+        "Futuristic",
+        "Responsibility",
+        "Significance",
+        "Includer",
+        "Ideation",
+        "Restorative",
+        "Self_Assurance",
+        "Individualization",
+        "Input",
+        "Strategic",
+        "Woo",
+        "Positivity",
+        "Intellection",
+        "Relator",
+        "Learner"
+      ],
+      "themeIndex": 0,
+      "currentTheme": null,
+      "seedIndex": 0,
+      "consecutiveSingleReplies": 0,
+      "scaleAnswers": {},
+      "signalTags": [],
+      "conversationSummary": "",
+      "lastSkipped": null
+    }
   },
-  "2fe1197e-cb4f-4ab0-9616-6ca91c8eca82": {
-    "sessionId": "2fe1197e-cb4f-4ab0-9616-6ca91c8eca82",
-    "createdAt": "2026-03-27T09:28:08.931Z",
-    "updatedAt": "2026-03-27T09:28:08.931Z",
+  "2e11accc-8668-4e02-a5b5-6c4ecda48f48": {
+    "sessionId": "2e11accc-8668-4e02-a5b5-6c4ecda48f48",
+    "createdAt": "2026-03-27T11:20:33.721Z",
+    "updatedAt": "2026-03-27T11:20:33.721Z",
     "messages": [
       {
         "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它。先说说，你一般在什么情况下会觉得时间过得特别快，完全沉浸其中的那种感觉？",
-        "timestamp": "2026-03-27T09:28:08.931Z"
+        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱\n\n我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~\n\n咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！\n\n先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~",
+        "timestamp": "2026-03-27T11:20:33.721Z"
       }
     ],
     "progress": {
@@ -39,17 +86,64 @@
     },
     "isComplete": false,
     "results": null,
-    "jobs": null
+    "jobs": null,
+    "assessmentState": {
+      "mode": "A",
+      "themeOrder": [
+        "Achiever",
+        "Command",
+        "Adaptability",
+        "Analytical",
+        "Arranger",
+        "Communication",
+        "Connectedness",
+        "Context",
+        "Belief",
+        "Competition",
+        "Developer",
+        "Deliberative",
+        "Consistency",
+        "Activator",
+        "Empathy",
+        "Focus",
+        "Discipline",
+        "Maximizer",
+        "Harmony",
+        "Futuristic",
+        "Responsibility",
+        "Significance",
+        "Includer",
+        "Ideation",
+        "Restorative",
+        "Self_Assurance",
+        "Individualization",
+        "Input",
+        "Strategic",
+        "Woo",
+        "Positivity",
+        "Intellection",
+        "Relator",
+        "Learner"
+      ],
+      "themeIndex": 0,
+      "currentTheme": null,
+      "seedIndex": 0,
+      "consecutiveSingleReplies": 0,
+      "scaleAnswers": {},
+      "signalTags": [],
+      "conversationSummary": "",
+      "lastSkipped": null
+    }
   },
-  "56c3bcfe-30ff-45c3-92d5-50744f44a164": {
-    "sessionId": "56c3bcfe-30ff-45c3-92d5-50744f44a164",
-    "createdAt": "2026-03-27T09:32:55.112Z",
-    "updatedAt": "2026-03-27T09:32:55.114Z",
+  "8819491d-8dd5-40d5-b5fc-33b2ae414bb9": {
+    "sessionId": "8819491d-8dd5-40d5-b5fc-33b2ae414bb9",
+    "createdAt": "2026-03-27T11:25:18.595Z",
+    "updatedAt": "2026-03-27T11:25:18.597Z",
     "messages": [
       {
         "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它。先说说，你一般在什么情况下会觉得时间过得特别快，完全沉浸其中的那种感觉？",
-        "timestamp": "2026-03-27T09:32:55.114Z"
+        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱\n\n我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~\n\n咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！\n\n先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~",
+        "timestamp": "2026-03-27T11:25:18.597Z"
       }
     ],
     "progress": {
@@ -60,148 +154,89 @@
     },
     "isComplete": false,
     "results": null,
-    "jobs": null
+    "jobs": null,
+    "assessmentState": {
+      "mode": "A",
+      "themeOrder": [
+        "Achiever",
+        "Command",
+        "Adaptability",
+        "Analytical",
+        "Arranger",
+        "Communication",
+        "Connectedness",
+        "Context",
+        "Belief",
+        "Competition",
+        "Developer",
+        "Deliberative",
+        "Consistency",
+        "Activator",
+        "Empathy",
+        "Focus",
+        "Discipline",
+        "Maximizer",
+        "Harmony",
+        "Futuristic",
+        "Responsibility",
+        "Significance",
+        "Includer",
+        "Ideation",
+        "Restorative",
+        "Self_Assurance",
+        "Individualization",
+        "Input",
+        "Strategic",
+        "Woo",
+        "Positivity",
+        "Intellection",
+        "Relator",
+        "Learner"
+      ],
+      "themeIndex": 0,
+      "currentTheme": null,
+      "seedIndex": 0,
+      "consecutiveSingleReplies": 0,
+      "scaleAnswers": {},
+      "signalTags": [],
+      "conversationSummary": "",
+      "lastSkipped": null
+    }
   },
-  "05c81799-c164-4642-bb90-0606104ec03f": {
-    "sessionId": "05c81799-c164-4642-bb90-0606104ec03f",
-    "createdAt": "2026-03-27T09:32:55.124Z",
-    "updatedAt": "2026-03-27T09:32:55.125Z",
+  "b6c1e674-d57e-4849-bdbc-5666fe35122b": {
+    "sessionId": "b6c1e674-d57e-4849-bdbc-5666fe35122b",
+    "createdAt": "2026-03-27T11:25:18.598Z",
+    "updatedAt": "2026-03-27T11:25:54.343Z",
     "messages": [
       {
         "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它。先说说，你一般在什么情况下会觉得时间过得特别快，完全沉浸其中的那种感觉？",
-        "timestamp": "2026-03-27T09:32:55.125Z"
-      }
-    ],
-    "progress": {
-      "execution": 0,
-      "influence": 0,
-      "relationship": 0,
-      "strategic": 0
-    },
-    "isComplete": false,
-    "results": null,
-    "jobs": null
-  },
-  "f42856eb-a994-4071-bdf3-c59a48381e0c": {
-    "sessionId": "f42856eb-a994-4071-bdf3-c59a48381e0c",
-    "createdAt": "2026-03-27T09:34:21.332Z",
-    "updatedAt": "2026-03-27T09:34:21.335Z",
-    "messages": [
-      {
-        "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它。先说说，你一般在什么情况下会觉得时间过得特别快，完全沉浸其中的那种感觉？",
-        "timestamp": "2026-03-27T09:34:21.335Z"
-      }
-    ],
-    "progress": {
-      "execution": 0,
-      "influence": 0,
-      "relationship": 0,
-      "strategic": 0
-    },
-    "isComplete": false,
-    "results": null,
-    "jobs": null
-  },
-  "d6b605fe-b869-47e6-ab27-d2f5c69b1dd4": {
-    "sessionId": "d6b605fe-b869-47e6-ab27-d2f5c69b1dd4",
-    "createdAt": "2026-03-27T09:34:21.347Z",
-    "updatedAt": "2026-03-27T09:34:21.348Z",
-    "messages": [
-      {
-        "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它。先说说，你一般在什么情况下会觉得时间过得特别快，完全沉浸其中的那种感觉？",
-        "timestamp": "2026-03-27T09:34:21.348Z"
-      }
-    ],
-    "progress": {
-      "execution": 0,
-      "influence": 0,
-      "relationship": 0,
-      "strategic": 0
-    },
-    "isComplete": false,
-    "results": null,
-    "jobs": null
-  },
-  "5110c00e-45ed-4d54-9ec8-abfc103a5e2c": {
-    "sessionId": "5110c00e-45ed-4d54-9ec8-abfc103a5e2c",
-    "createdAt": "2026-03-27T09:34:39.948Z",
-    "updatedAt": "2026-03-27T09:34:39.949Z",
-    "messages": [
-      {
-        "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它。先说说，你一般在什么情况下会觉得时间过得特别快，完全沉浸其中的那种感觉？",
-        "timestamp": "2026-03-27T09:34:39.949Z"
-      }
-    ],
-    "progress": {
-      "execution": 0,
-      "influence": 0,
-      "relationship": 0,
-      "strategic": 0
-    },
-    "isComplete": false,
-    "results": null,
-    "jobs": null
-  },
-  "f44727d8-7d62-4c4b-bf02-9144bebecfc9": {
-    "sessionId": "f44727d8-7d62-4c4b-bf02-9144bebecfc9",
-    "createdAt": "2026-03-27T09:34:39.959Z",
-    "updatedAt": "2026-03-27T09:34:39.959Z",
-    "messages": [
-      {
-        "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它。先说说，你一般在什么情况下会觉得时间过得特别快，完全沉浸其中的那种感觉？",
-        "timestamp": "2026-03-27T09:34:39.959Z"
-      }
-    ],
-    "progress": {
-      "execution": 0,
-      "influence": 0,
-      "relationship": 0,
-      "strategic": 0
-    },
-    "isComplete": false,
-    "results": null,
-    "jobs": null
-  },
-  "107f5036-3c59-4b8d-bff6-962204fc4917": {
-    "sessionId": "107f5036-3c59-4b8d-bff6-962204fc4917",
-    "createdAt": "2026-03-27T09:42:25.228Z",
-    "updatedAt": "2026-03-27T09:42:25.230Z",
-    "messages": [
-      {
-        "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它。先说说，你一般在什么情况下会觉得时间过得特别快，完全沉浸其中的那种感觉？",
-        "timestamp": "2026-03-27T09:42:25.230Z"
-      }
-    ],
-    "progress": {
-      "execution": 0,
-      "influence": 0,
-      "relationship": 0,
-      "strategic": 0
-    },
-    "isComplete": false,
-    "results": null,
-    "jobs": null
-  },
-  "502f7377-5d56-43bc-9cfe-d054f885bc22": {
-    "sessionId": "502f7377-5d56-43bc-9cfe-d054f885bc22",
-    "createdAt": "2026-03-27T09:42:25.240Z",
-    "updatedAt": "2026-03-27T09:50:06.110Z",
-    "messages": [
-      {
-        "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它。先说说，你一般在什么情况下会觉得时间过得特别快，完全沉浸其中的那种感觉？",
-        "timestamp": "2026-03-27T09:42:25.240Z"
+        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱\n\n我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~\n\n咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！\n\n先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~",
+        "timestamp": "2026-03-27T11:25:18.599Z"
       },
       {
         "role": "user",
-        "content": "是这样的",
-        "timestamp": "2026-03-27T09:50:06.110Z"
+        "content": "我是研究生",
+        "timestamp": "2026-03-27T11:25:39.219Z"
+      },
+      {
+        "role": "user",
+        "content": "__switch_to_scale__",
+        "timestamp": "2026-03-27T11:25:43.035Z"
+      },
+      {
+        "role": "user",
+        "content": "换一个",
+        "timestamp": "2026-03-27T11:25:46.271Z"
+      },
+      {
+        "role": "assistant",
+        "content": "好的，咱们换个话题~ 喵~ “小组群里大家为了一个方案吵了三小时没结论，你会不会直接在群里发一条：‘听我的，现在定A方案，出了问题我负责，散会！’？”",
+        "timestamp": "2026-03-27T11:25:46.274Z"
+      },
+      {
+        "role": "user",
+        "content": "__switch_to_scale__",
+        "timestamp": "2026-03-27T11:25:54.339Z"
       }
     ],
     "progress": {
@@ -212,17 +247,73 @@
     },
     "isComplete": false,
     "results": null,
-    "jobs": null
+    "jobs": null,
+    "assessmentState": {
+      "mode": "A",
+      "themeOrder": [
+        "Achiever",
+        "Command",
+        "Adaptability",
+        "Analytical",
+        "Arranger",
+        "Communication",
+        "Connectedness",
+        "Context",
+        "Belief",
+        "Competition",
+        "Developer",
+        "Deliberative",
+        "Consistency",
+        "Activator",
+        "Empathy",
+        "Focus",
+        "Discipline",
+        "Maximizer",
+        "Harmony",
+        "Futuristic",
+        "Responsibility",
+        "Significance",
+        "Includer",
+        "Ideation",
+        "Restorative",
+        "Self_Assurance",
+        "Individualization",
+        "Input",
+        "Strategic",
+        "Woo",
+        "Positivity",
+        "Intellection",
+        "Relator",
+        "Learner"
+      ],
+      "themeIndex": 1,
+      "currentTheme": "Command",
+      "seedIndex": 1,
+      "consecutiveSingleReplies": 0,
+      "scaleAnswers": {},
+      "signalTags": [
+        {
+          "theme": "Achiever",
+          "signal": "skip",
+          "weight": -1
+        }
+      ],
+      "conversationSummary": "",
+      "lastSkipped": "2026-03-27T11:25:46.272Z",
+      "roundCount": 0,
+      "confirmedThemes": [],
+      "signalScores": {}
+    }
   },
-  "3becfe39-ce3c-4149-9ab2-04168416fd2b": {
-    "sessionId": "3becfe39-ce3c-4149-9ab2-04168416fd2b",
-    "createdAt": "2026-03-27T09:51:20.858Z",
-    "updatedAt": "2026-03-27T09:51:20.861Z",
+  "9a4de99b-1ed4-4edf-b553-082f8dc092be": {
+    "sessionId": "9a4de99b-1ed4-4edf-b553-082f8dc092be",
+    "createdAt": "2026-03-27T11:26:06.661Z",
+    "updatedAt": "2026-03-27T11:26:06.663Z",
     "messages": [
       {
         "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它。先说说，你一般在什么情况下会觉得时间过得特别快，完全沉浸其中的那种感觉？",
-        "timestamp": "2026-03-27T09:51:20.861Z"
+        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱\n\n我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~\n\n咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！\n\n先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~",
+        "timestamp": "2026-03-27T11:26:06.663Z"
       }
     ],
     "progress": {
@@ -233,17 +324,69 @@
     },
     "isComplete": false,
     "results": null,
-    "jobs": null
+    "jobs": null,
+    "assessmentState": {
+      "mode": "A",
+      "themeOrder": [
+        "Achiever",
+        "Command",
+        "Adaptability",
+        "Analytical",
+        "Arranger",
+        "Communication",
+        "Connectedness",
+        "Context",
+        "Belief",
+        "Competition",
+        "Developer",
+        "Deliberative",
+        "Consistency",
+        "Activator",
+        "Empathy",
+        "Focus",
+        "Discipline",
+        "Maximizer",
+        "Harmony",
+        "Futuristic",
+        "Responsibility",
+        "Significance",
+        "Includer",
+        "Ideation",
+        "Restorative",
+        "Self_Assurance",
+        "Individualization",
+        "Input",
+        "Strategic",
+        "Woo",
+        "Positivity",
+        "Intellection",
+        "Relator",
+        "Learner"
+      ],
+      "themeIndex": 0,
+      "currentTheme": null,
+      "seedIndex": 0,
+      "consecutiveSingleReplies": 0,
+      "scaleAnswers": {},
+      "signalTags": [],
+      "conversationSummary": "",
+      "lastSkipped": null
+    }
   },
-  "efce2e9c-652d-4281-b586-63e1777e5d0a": {
-    "sessionId": "efce2e9c-652d-4281-b586-63e1777e5d0a",
-    "createdAt": "2026-03-27T09:51:20.870Z",
-    "updatedAt": "2026-03-27T09:51:20.871Z",
+  "ef7f85bb-2a71-49bf-b9de-85a3c886c64e": {
+    "sessionId": "ef7f85bb-2a71-49bf-b9de-85a3c886c64e",
+    "createdAt": "2026-03-27T11:26:06.671Z",
+    "updatedAt": "2026-03-27T11:26:19.469Z",
     "messages": [
       {
         "role": "assistant",
-        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它。先说说，你一般在什么情况下会觉得时间过得特别快，完全沉浸其中的那种感觉？",
-        "timestamp": "2026-03-27T09:51:20.871Z"
+        "content": "喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱\n\n我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~\n\n咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！\n\n先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~",
+        "timestamp": "2026-03-27T11:26:06.672Z"
+      },
+      {
+        "role": "user",
+        "content": "我是本科生",
+        "timestamp": "2026-03-27T11:26:19.465Z"
       }
     ],
     "progress": {
@@ -254,6 +397,56 @@
     },
     "isComplete": false,
     "results": null,
-    "jobs": null
+    "jobs": null,
+    "assessmentState": {
+      "mode": "A",
+      "themeOrder": [
+        "Achiever",
+        "Command",
+        "Adaptability",
+        "Analytical",
+        "Arranger",
+        "Communication",
+        "Connectedness",
+        "Context",
+        "Belief",
+        "Competition",
+        "Developer",
+        "Deliberative",
+        "Consistency",
+        "Activator",
+        "Empathy",
+        "Focus",
+        "Discipline",
+        "Maximizer",
+        "Harmony",
+        "Futuristic",
+        "Responsibility",
+        "Significance",
+        "Includer",
+        "Ideation",
+        "Restorative",
+        "Self_Assurance",
+        "Individualization",
+        "Input",
+        "Strategic",
+        "Woo",
+        "Positivity",
+        "Intellection",
+        "Relator",
+        "Learner"
+      ],
+      "themeIndex": 0,
+      "currentTheme": "Achiever",
+      "seedIndex": 1,
+      "consecutiveSingleReplies": 0,
+      "scaleAnswers": {},
+      "signalTags": [],
+      "conversationSummary": "",
+      "lastSkipped": null,
+      "roundCount": 0,
+      "confirmedThemes": [],
+      "signalScores": {}
+    }
   }
 }

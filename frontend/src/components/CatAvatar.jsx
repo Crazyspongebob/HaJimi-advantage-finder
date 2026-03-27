@@ -1,15 +1,14 @@
-// 哈基米猫咪头像组件 — 使用真实猫咪图片，降级到 SVG 剪影
+// 哈基米猫咪头像组件 — 支持 size + state 属性
+// state: 'idle' | 'thinking' | 'speaking'
 import React, { useState } from 'react'
 
-// 尺寸配置映射
 const sizeConfig = {
-  sm: { container: 'w-8 h-8', svgSize: 'text-lg' },
-  md: { container: 'w-12 h-12', svgSize: 'text-2xl' },
-  lg: { container: 'w-20 h-20', svgSize: 'text-4xl' },
-  xl: { container: 'w-32 h-32', svgSize: 'text-6xl' },
+  sm:  { px: 48,  svgClass: 'text-lg' },
+  md:  { px: 80,  svgClass: 'text-3xl' },
+  lg:  { px: 100, svgClass: 'text-4xl' },
+  xl:  { px: 128, svgClass: 'text-6xl' },
 }
 
-// Minimal SVG cat silhouette fallback
 function CatSVG() {
   return (
     <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
@@ -33,46 +32,69 @@ function CatSVG() {
   )
 }
 
-function CatAvatar({ size = 'md', bouncing = false, className = '' }) {
-  const config = sizeConfig[size] || sizeConfig.md
+/**
+ * @param {'sm'|'md'|'lg'|'xl'} size
+ * @param {'idle'|'thinking'|'speaking'} avatarState
+ * @param {boolean} bouncing
+ * @param {string} className
+ */
+function CatAvatar({ size = 'md', avatarState = 'idle', bouncing = false, className = '' }) {
+  const cfg = sizeConfig[size] || sizeConfig.md
   const [imgError, setImgError] = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
 
+  // State-driven ring style
+  const ringStyle = (() => {
+    if (avatarState === 'speaking') return {
+      border: '2px solid #C9A84C',
+      boxShadow: '0 0 0 4px rgba(201,168,76,0.25), 0 0 16px rgba(201,168,76,0.3)',
+      animation: 'speakingRing 1.2s ease-in-out infinite',
+    }
+    if (avatarState === 'thinking') return {
+      border: '2px solid rgba(201,168,76,0.5)',
+      boxShadow: '0 2px 8px rgba(15,23,42,0.15)',
+      opacity: 0.75,
+      animation: 'thinkingPulse 1.8s ease-in-out infinite',
+    }
+    return {
+      border: '2px solid rgba(201,168,76,0.4)',
+      boxShadow: '0 2px 8px rgba(15,23,42,0.15)',
+    }
+  })()
+
   return (
-    <div
-      className={`
-        ${config.container}
-        rounded-full
-        overflow-hidden
-        flex-shrink-0
-        ${bouncing ? 'animate-bounce' : ''}
-        ${className}
-      `}
-      style={{
-        border: '1.5px solid rgba(201,168,76,0.4)',
-        boxShadow: '0 2px 8px rgba(15,23,42,0.15)',
-      }}
-      aria-label="哈基米猫咪头像"
-    >
-      {!imgError ? (
-        <div className="relative w-full h-full">
-          {!imgLoaded && (
-            <div className="absolute inset-0">
-              <CatSVG />
-            </div>
-          )}
-          <img
-            src="https://cataas.com/cat/cute"
-            alt="哈基米猫咪"
-            className={`w-full h-full object-cover transition-opacity duration-500 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
-            onLoad={() => setImgLoaded(true)}
-            onError={() => setImgError(true)}
-          />
-        </div>
-      ) : (
-        <CatSVG />
-      )}
-    </div>
+    <>
+      <style>{`
+        @keyframes speakingRing {
+          0%, 100% { box-shadow: 0 0 0 3px rgba(201,168,76,0.2), 0 0 12px rgba(201,168,76,0.2); }
+          50% { box-shadow: 0 0 0 6px rgba(201,168,76,0.35), 0 0 20px rgba(201,168,76,0.4); }
+        }
+        @keyframes thinkingPulse {
+          0%, 100% { opacity: 0.75; }
+          50% { opacity: 0.45; }
+        }
+      `}</style>
+      <div
+        className={`rounded-full overflow-hidden flex-shrink-0 ${bouncing ? 'animate-bounce' : ''} ${className}`}
+        style={{ width: cfg.px, height: cfg.px, minWidth: cfg.px, transition: 'box-shadow 0.3s', ...ringStyle }}
+        aria-label="哈基米猫咪头像"
+      >
+        {!imgError ? (
+          <div className="relative w-full h-full">
+            {!imgLoaded && <div className="absolute inset-0"><CatSVG /></div>}
+            <img
+              src="https://cataas.com/cat/cute"
+              alt="哈基米猫咪"
+              className={`w-full h-full object-cover transition-opacity duration-500 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+              onLoad={() => setImgLoaded(true)}
+              onError={() => setImgError(true)}
+            />
+          </div>
+        ) : (
+          <CatSVG />
+        )}
+      </div>
+    </>
   )
 }
 

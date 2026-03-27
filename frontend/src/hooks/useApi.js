@@ -1,8 +1,7 @@
 // 自定义 API Hook - 封装所有后端请求
 import { useDemoMode } from '../context/DemoModeContext'
-import { mockData, mockProgressSequence } from '../utils/mockData'
+import { demoFullAnalysis } from '../utils/mockData'
 
-// 统一错误处理
 async function fetchWithErrorHandling(url, options = {}) {
   try {
     const response = await fetch(url, {
@@ -22,40 +21,36 @@ async function fetchWithErrorHandling(url, options = {}) {
 }
 
 export function useApi() {
-  const { isDemoMode, simulateDelay } = useDemoMode()
+  const { isDemoMode, simulateDelay, getNextDemoResponse } = useDemoMode()
 
   // ── 发送聊天消息 POST /api/chat ─────────────────────────────
-  // 新增: scaleAnswer 参数用于量表模式提交
-  // scaleAnswer: { theme: string, answers: number[] }
   async function sendMessage(sessionId, message, history = [], scaleAnswer = null) {
     if (isDemoMode) {
-      await simulateDelay(800)
-      const msgIndex = history.length
-      const mockMsg = mockData.messages[Math.min(msgIndex + 1, mockData.messages.length - 1)]
-      const progressIndex = Math.min(Math.floor(msgIndex / 2), mockProgressSequence.length - 1)
-      const progress = mockProgressSequence[progressIndex]
-      const isComplete = msgIndex >= 4
+      await simulateDelay(900)
+      const entry = getNextDemoResponse()
       return {
         data: {
           sessionId: sessionId || 'demo-session-001',
-          reply: mockMsg?.content || '喵~ 感谢你的分享！哈基米已充分了解你，可以生成报告了！🐾',
-          progress,
-          isComplete,
-          mode: 'A',
-          currentTheme: null,
-          skipDetected: false,
+          reply: entry.reply,
+          progress: entry.progress,
+          isComplete: entry.isComplete,
+          readyForReport: entry.readyForReport,
+          roundCount: entry.roundCount,
+          mode: entry.mode || 'A',
+          currentTheme: entry.currentTheme || null,
+          skipDetected: entry.skipDetected || false,
+          autoPromptReport: entry.autoPromptReport || false,
         },
         error: null,
       }
     }
-
     return fetchWithErrorHandling('/api/chat', {
       method: 'POST',
       body: JSON.stringify({ sessionId, message, history, scaleAnswer }),
     })
   }
 
-  // ── 量表答题提交（包装 sendMessage）────────────────────────
+  // ── 量表答题提交 ────────────────────────────────────────────
   async function submitScaleAnswer(sessionId, theme, answers) {
     return sendMessage(sessionId, '', [], { theme, answers })
   }
@@ -64,7 +59,7 @@ export function useApi() {
   async function analyzeResults(sessionId, history = []) {
     if (isDemoMode) {
       await simulateDelay(2000)
-      return { data: mockData.analysis, error: null }
+      return { data: demoFullAnalysis, error: null }
     }
     return fetchWithErrorHandling('/api/analyze', {
       method: 'POST',
@@ -76,7 +71,8 @@ export function useApi() {
   async function getRecommendations(topTalents, selectedDomains) {
     if (isDemoMode) {
       await simulateDelay(1200)
-      return { data: mockData.jobs, error: null }
+      const { mockJobRecommendations } = await import('../utils/mockData')
+      return { data: mockJobRecommendations, error: null }
     }
     return fetchWithErrorHandling('/api/recommend', {
       method: 'POST',
@@ -89,12 +85,7 @@ export function useApi() {
     if (isDemoMode) {
       await simulateDelay(500)
       return {
-        data: {
-          sessionId: 'demo-session-001',
-          messages: mockData.messages,
-          progress: mockProgressSequence[mockProgressSequence.length - 1],
-          isComplete: true,
-        },
+        data: { sessionId: 'demo-session-001', progress: { execution: 75, influence: 60, relationship: 70, strategic: 65 }, isComplete: true },
         error: null,
       }
     }
@@ -102,7 +93,6 @@ export function useApi() {
   }
 
   // ── 语音合成 POST /api/tts ──────────────────────────────────
-  // 返回 { data: { audioUrl, audioBlob }, error }
   async function synthesizeSpeech(text) {
     if (isDemoMode) {
       await simulateDelay(300)
@@ -116,7 +106,6 @@ export function useApi() {
       })
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}))
-        // TTS 失败是非致命错误，返回 null data
         console.warn('[TTS] 合成失败:', errData.message || response.status)
         return { data: null, error: errData.message || 'TTS失败' }
       }
@@ -132,23 +121,12 @@ export function useApi() {
   // ── 语音配置 GET /api/voice/config ─────────────────────────
   async function getVoiceConfig() {
     if (isDemoMode) {
-      return {
-        data: { autoplay: false, maxTtsLength: 250, voice: 'qiaopi_mengmei', speed: 1.0 },
-        error: null,
-      }
+      return { data: { autoplay: false, maxTtsLength: 250, voice: 'qiaopi_mengmei', speed: 1.0 }, error: null }
     }
     return fetchWithErrorHandling('/api/voice/config')
   }
 
-  return {
-    sendMessage,
-    submitScaleAnswer,
-    analyzeResults,
-    getRecommendations,
-    getSession,
-    synthesizeSpeech,
-    getVoiceConfig,
-  }
+  return { sendMessage, submitScaleAnswer, analyzeResults, getRecommendations, getSession, synthesizeSpeech, getVoiceConfig }
 }
 
 export default useApi
