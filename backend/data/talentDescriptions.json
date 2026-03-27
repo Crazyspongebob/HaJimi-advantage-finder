@@ -1,0 +1,283 @@
+{
+  "talents": [
+    {
+      "name": "成就",
+      "englishName": "Achiever",
+      "domain": "execution",
+      "domainName": "执行力",
+      "shortDescription": "天生有强烈的内驱力，每天都需要完成具体的事才有满足感。",
+      "fullDescription": "你像一台永不停歇的发动机。无论外部压力如何，你内心对「做到」有着几乎本能的渴望。一天结束时，只有完成了具体的事情，你才能真正安心下来。这不是焦虑，而是你的燃料。",
+      "careerHint": "适合目标驱动型岗位：项目管理、销售、创业、运营。"
+    },
+    {
+      "name": "统筹",
+      "englishName": "Arranger",
+      "domain": "execution",
+      "domainName": "执行力",
+      "shortDescription": "能在混乱中找到最优排列组合，协调多方资源游刃有余。",
+      "fullDescription": "当别人看到混乱，你看到的是可以重新排列的拼图。你能在脑海中同时追踪多个变量，找到最高效的配置方式——并且当情况变化时，你能立刻调整而不是崩溃。",
+      "careerHint": "适合需要多线程管理的岗位：运营总监、PMO、活动策划。"
+    },
+    {
+      "name": "审慎",
+      "englishName": "Deliberative",
+      "domain": "execution",
+      "domainName": "执行力",
+      "shortDescription": "做决策前会仔细权衡风险，宁愿慢一步也要确保正确。",
+      "fullDescription": "你在做任何重要决定前，都会在脑海中把可能出错的地方想清楚。这不是胆小，而是智慧——你的谨慎让身边的人少走了很多弯路。别人冲动时，你是那个拦下来说「等等，我们想清楚了吗」的人。",
+      "careerHint": "适合需要严谨判断的岗位：风险管理、法务合规、财务审计。"
+    },
+    {
+      "name": "纪律",
+      "englishName": "Discipline",
+      "domain": "execution",
+      "domainName": "执行力",
+      "shortDescription": "喜欢结构化和可预测性，善于建立系统和流程让事情有序运转。",
+      "fullDescription": "混乱让你不舒服，秩序让你充满能量。你天然地想要把事情组织成清晰的步骤、时间表和流程。在你参与的地方，系统会变得更加稳固，执行会变得更加可靠。",
+      "careerHint": "适合流程导向型岗位：质量管理、供应链、运营管理。"
+    },
+    {
+      "name": "专注",
+      "englishName": "Focus",
+      "domain": "execution",
+      "domainName": "执行力",
+      "shortDescription": "能过滤噪音，把所有精力集中在最重要的目标上并坚持到底。",
+      "fullDescription": "你的内心有一个导航系统，始终指向当前最重要的目标。你不容易被次要任务分散注意力，也不会在「有趣但不重要」的事情上浪费时间。这种聚焦能力让你在追求长期目标时比大多数人走得更稳更远。",
+      "careerHint": "适合需要深度投入的岗位：研究员、技术专家、战略规划。"
+    },
+    {
+      "name": "公平",
+      "englishName": "Consistency",
+      "domain": "execution",
+      "domainName": "执行力",
+      "shortDescription": "相信规则面前人人平等，致力于为所有人创造公平的环境。",
+      "fullDescription": "你深信每个人都应该在相同的规则下竞争。特权让你不舒服，偏袒让你愤怒。你会不遗余力地维护流程的公平性，即使这意味着你自己也无法例外。人们信任你，因为他们知道你不会区别对待。",
+      "careerHint": "适合合规类和管理类岗位：HR、监察合规、公共政策。"
+    },
+    {
+      "name": "排难",
+      "englishName": "Restorative",
+      "domain": "execution",
+      "domainName": "执行力",
+      "shortDescription": "天然擅长诊断问题、找到根源，享受把事情「修好」的成就感。",
+      "fullDescription": "别人看到问题会退缩，你看到问题会跃跃欲试。你有一种本能的「修复驱动力」——找出哪里错了、为什么错了、怎么修复它。这种能力在危机时刻让你成为不可缺少的人。",
+      "careerHint": "适合问题解决型岗位：技术运维、售后服务、战略咨询、产品。"
+    },
+    {
+      "name": "责任",
+      "englishName": "Responsibility",
+      "domain": "execution",
+      "domainName": "执行力",
+      "shortDescription": "对承诺有极强的使命感，答应了的事情必须完成，绝不借口推脱。",
+      "fullDescription": "你的名字就是可靠的代名词。一旦你承诺了某件事，它就成了你内心的「未了心结」，直到完成为止。这种心理契约不需要外部监督——你最严格的监督者就是你自己。",
+      "careerHint": "在任何岗位都是核心资产，尤其适合：项目管理、客户成功、创始人角色。"
+    },
+    {
+      "name": "行动",
+      "englishName": "Activator",
+      "domain": "influence",
+      "domainName": "影响力",
+      "shortDescription": "「现在就开始」是你的信条，你相信行动比计划更能带来改变。",
+      "fullDescription": "等待、讨论、分析——这些都让你焦虑。你相信唯有行动才能检验真相，所以你总是第一个按下启动键的人。你的存在让团队少了很多「等到条件成熟再说」的拖延。",
+      "careerHint": "适合快节奏岗位：创业、销售、市场推广、BD。"
+    },
+    {
+      "name": "沟通",
+      "englishName": "Communication",
+      "domain": "influence",
+      "domainName": "影响力",
+      "shortDescription": "天生善于将想法转化为故事，让抽象概念变得生动有力。",
+      "fullDescription": "你总能找到正确的词语来描述任何事情。你讲的故事让人记住，你解释的概念让人秒懂，你写的文字让人有共鸣。语言在你手里是武器，也是礼物。",
+      "careerHint": "适合表达类岗位：市场营销、演讲培训、内容创作、公关。"
+    },
+    {
+      "name": "竞争",
+      "englishName": "Competition",
+      "domain": "influence",
+      "domainName": "影响力",
+      "shortDescription": "需要比较，需要赢——用他人的成就校准自己的目标，驱动自己更好。",
+      "fullDescription": "排名、指标、比较——这些不让你焦虑，反而让你兴奋。你不是为了打败别人而竞争，而是竞争让你知道自己的努力到底值几分。当你看到榜单时，你想的是「怎么到第一」。",
+      "careerHint": "适合结果导向型岗位：销售、体育、投资、商业竞争环境。"
+    },
+    {
+      "name": "统率",
+      "englishName": "Command",
+      "domain": "influence",
+      "domainName": "影响力",
+      "shortDescription": "不回避紧张和冲突，敢于主导局面，让混乱的局面重新有方向。",
+      "fullDescription": "当局面混乱、没人敢发声的时候，你会站出来。你不怕直接，不怕得罪人，因为你知道有时候唯有清晰的立场才能推动事情前进。你的存在给人一种「有人掌舵」的安全感。",
+      "careerHint": "适合领导力要求高的岗位：CEO、军队、应急管理、高压谈判。"
+    },
+    {
+      "name": "追求",
+      "englishName": "Significance",
+      "domain": "influence",
+      "domainName": "影响力",
+      "shortDescription": "渴望被看见、有影响力，希望自己的工作留下真正的痕迹。",
+      "fullDescription": "你不想做一个可以被替代的螺丝钉。你希望自己的工作有名字、有影响、被记住。这不是虚荣，这是一种对「意义感」的追求——它驱动你做到卓越而非平庸。",
+      "careerHint": "适合需要影响力和声誉的岗位：创业者、演讲家、政治家、媒体人。"
+    },
+    {
+      "name": "取悦",
+      "englishName": "Woo",
+      "domain": "influence",
+      "domainName": "影响力",
+      "shortDescription": "天生擅长赢得陌生人好感，享受认识新朋友、建立初步连接的过程。",
+      "fullDescription": "你能在 5 分钟内让一个陌生人对你有好感。这不是表演，而是你真的对每个新认识的人感到好奇和热情。第一印象是你的舞台，社交场合是你的主场。",
+      "careerHint": "适合需要社交破冰的岗位：销售、公关、社区运营、政治。"
+    },
+    {
+      "name": "自信",
+      "englishName": "Self-Assurance",
+      "domain": "influence",
+      "domainName": "影响力",
+      "shortDescription": "对自己的判断和能力有深度信心，不依赖外部认可来做决策。",
+      "fullDescription": "你有一个内置的导航系统，告诉你什么是对的，该往哪里走。外部的质疑会听，但不会动摇你的核心判断。这种内在稳定性在别人迷茫时，让你成为那个最清醒的人。",
+      "careerHint": "适合需要独立判断的岗位：创业者、独立顾问、投资人、外科医生。"
+    },
+    {
+      "name": "适应",
+      "englishName": "Adaptability",
+      "domain": "relationship",
+      "domainName": "关系建立",
+      "shortDescription": "活在当下，面对变化时能快速调整，不执着于计划，顺流而动。",
+      "fullDescription": "计划对你来说是参考，不是枷锁。当情况变化时，你不会崩溃或抱怨，而是快速调整，把新的现实当成新的起点。你的存在让团队在动荡时期保持弹性。",
+      "careerHint": "适合快速变化的环境：创业、媒体、活动策划、紧急项目。"
+    },
+    {
+      "name": "伯乐",
+      "englishName": "Developer",
+      "domain": "relationship",
+      "domainName": "关系建立",
+      "shortDescription": "能看到他人身上的潜力，从帮助别人成长中获得深刻的满足感。",
+      "fullDescription": "你看人看的不是他现在的样子，而是他可能成为的样子。别人不经意的进步，你都能看到并认可。你有一种天然的耐心来培育别人，不是出于义务，而是出于真心相信每个人都值得被看见和支持。",
+      "careerHint": "适合人才发展型岗位：HR、培训师、教练、导师、教育工作者。"
+    },
+    {
+      "name": "包容",
+      "englishName": "Includer",
+      "domain": "relationship",
+      "domainName": "关系建立",
+      "shortDescription": "对被排斥的感觉极为敏感，本能地想把每个人都带入圈子。",
+      "fullDescription": "你的眼睛会自动扫描房间里那个站在角落的人。你不忍心看到有人被排斥、被忽视。你的团队因为你而更加多元和包容，每个人都觉得自己有位置。",
+      "careerHint": "适合多元文化和包容性强调的岗位：DEI、社区建设、NGO、HR。"
+    },
+    {
+      "name": "积极",
+      "englishName": "Positivity",
+      "domain": "relationship",
+      "domainName": "关系建立",
+      "shortDescription": "天生乐观，有感染力，能让身边的人情绪变好、充满干劲。",
+      "fullDescription": "你进入一个房间，气氛就会不一样。你的热情和乐观是真实的，不是表演。你能看到任何情况中令人振奋的一面，并把这种能量传递给周围的人——这是一种稀缺的天赋。",
+      "careerHint": "适合需要激励氛围的岗位：教练、销售管理、品牌代言、客户服务。"
+    },
+    {
+      "name": "体谅",
+      "englishName": "Empathy",
+      "domain": "relationship",
+      "domainName": "关系建立",
+      "shortDescription": "能感受到他人的情绪，即使他们没有开口说出来。",
+      "fullDescription": "你不需要别人告诉你他们的感受——你能感觉到。这种情感雷达让你成为最懂人心的那个人。在别人觉得「他没说什么啊」的时候，你已经知道对方需要什么了。",
+      "careerHint": "适合以人为核心的岗位：心理咨询、社会工作、护理、客户成功。"
+    },
+    {
+      "name": "关联",
+      "englishName": "Connectedness",
+      "domain": "relationship",
+      "domainName": "关系建立",
+      "shortDescription": "相信万物相连，能看到事件之间的深层联系和更大的意义。",
+      "fullDescription": "你不相信巧合，你相信联系。你能感受到个人行为如何影响更大的整体，这种「连接感」让你有一种平静的确信——一切都在某种更大的叙事中有其位置。这让你成为一个深刻的思考者和稳定的存在。",
+      "careerHint": "适合需要整合视野的岗位：战略规划、哲学研究、灵性导师、社会企业。"
+    },
+    {
+      "name": "交往",
+      "englishName": "Relator",
+      "domain": "relationship",
+      "domainName": "关系建立",
+      "shortDescription": "倾向于与少数人建立深度亲密的关系，而非广泛的浅层社交。",
+      "fullDescription": "你不需要很多朋友，但你需要真实的朋友。你愿意花时间真正了解一个人，接受他们的缺陷，与他们分享你自己的不完美。你圈子里的人，都深深信任你——因为你是真的在乎他们。",
+      "careerHint": "适合长期关系类岗位：咨询顾问、私人银行、高端销售、心理治疗师。"
+    },
+    {
+      "name": "和谐",
+      "englishName": "Harmony",
+      "domain": "relationship",
+      "domainName": "关系建立",
+      "shortDescription": "本能寻求共识，不喜欢冲突，善于找到各方都能接受的方案。",
+      "fullDescription": "冲突让你不舒服，不是因为你软弱，而是因为你真的相信多数分歧都可以通过找到共同点来化解。你是团队里的润滑剂——让不同观点的人能够坐在一起，找到前进的路。",
+      "careerHint": "适合协调类岗位：调解人、外交官、项目协调、跨团队 PM。"
+    },
+    {
+      "name": "分析",
+      "englishName": "Analytical",
+      "domain": "strategic",
+      "domainName": "战略思维",
+      "shortDescription": "本能地寻找证据、质疑假设，必须看到逻辑支撑才能信服。",
+      "fullDescription": "你不接受「大家都这么说」作为答案。你需要数据，需要逻辑，需要看到论证链条。这不是挑剔，而是一种严格的思维诚实——你帮助身边的人避免了无数基于错误前提的决策。",
+      "careerHint": "适合数据驱动型岗位：数据分析、投资研究、咨询、科学研究。"
+    },
+    {
+      "name": "前瞻",
+      "englishName": "Futuristic",
+      "domain": "strategic",
+      "domainName": "战略思维",
+      "shortDescription": "被未来的可能性所激励，能清晰描绘还未发生的美好图景。",
+      "fullDescription": "未来对你来说不是焦虑的来源，而是能量的来源。你能在脑海中描绘出清晰的未来图景，而这种图景又反过来激励你和身边的人在当下行动。「如果...会怎样」是你最喜欢的开头。",
+      "careerHint": "适合愿景型岗位：创业者、战略规划师、未来学家、产品愿景负责人。"
+    },
+    {
+      "name": "理念",
+      "englishName": "Ideation",
+      "domain": "strategic",
+      "domainName": "战略思维",
+      "shortDescription": "痴迷于新想法，善于从不同领域发现意外的共同点和创新连接。",
+      "fullDescription": "你的大脑一直在产生新的想法，而且你真的享受这个过程。最让你兴奋的，是发现两个看似不相关的概念之间的神秘联系。你是团队里的创意引擎，总能把讨论带到没人想到过的方向。",
+      "careerHint": "适合创新型岗位：产品创新、创意广告、R&D、内容策划。"
+    },
+    {
+      "name": "搜集",
+      "englishName": "Input",
+      "domain": "strategic",
+      "domainName": "战略思维",
+      "shortDescription": "天生的信息收藏家，总是在积累知识、资源和人脉，以备不时之需。",
+      "fullDescription": "你的大脑是一个图书馆，也是一个储藏室。你无法抗拒好文章、有趣的人、有用的工具——你总觉得「万一以后用得上」。这种广博的积累让你成为团队里最全面的资源库。",
+      "careerHint": "适合知识密集型岗位：研究员、顾问、情报分析、策展人。"
+    },
+    {
+      "name": "回顾",
+      "englishName": "Context",
+      "domain": "strategic",
+      "domainName": "战略思维",
+      "shortDescription": "通过理解历史和背景来理解当下，相信过去是最好的老师。",
+      "fullDescription": "当别人问「接下来怎么办」时，你会先问「这件事是怎么走到今天的」。你深信不了解来路就无法判断去向。历史、背景、前因——这些是你思考的基石，让你的判断比别人更有根基。",
+      "careerHint": "适合历史分析类岗位：历史研究、档案管理、法律、战略咨询。"
+    },
+    {
+      "name": "学习",
+      "englishName": "Learner",
+      "domain": "strategic",
+      "domainName": "战略思维",
+      "shortDescription": "学习本身就是奖励，从零到精通的旅程比终点更令你兴奋。",
+      "fullDescription": "你不一定想成为专家，但你绝对热爱成为专家的那个过程。每进入一个新领域，你都会感到一种近乎孩子气的兴奋。这种对学习本身的热爱，让你在任何快速变化的环境中都能快速进化。",
+      "careerHint": "适合快速迭代型岗位：技术研发、咨询、创业、跨界领域。"
+    },
+    {
+      "name": "思维",
+      "englishName": "Intellection",
+      "domain": "strategic",
+      "domainName": "战略思维",
+      "shortDescription": "享受深度独立思考，脑子里总有思维活动，喜欢把一个问题想透。",
+      "fullDescription": "独处对你来说是充电，而不是孤独。你喜欢在安静中把一个复杂问题从各个角度想透彻，形成自己的独特见解。这种深度反思能力让你产出的想法有一种别人很难复制的深度。",
+      "careerHint": "适合需要独立思考的岗位：哲学研究、策略规划、写作、系统设计。"
+    },
+    {
+      "name": "战略",
+      "englishName": "Strategic",
+      "domain": "strategic",
+      "domainName": "战略思维",
+      "shortDescription": "天生能在复杂情境中看到多条路径，迅速找到最优解。",
+      "fullDescription": "当别人看到一堆杂乱的信息，你看到的是模式、路径和可能性。你的大脑会自动进行模式识别，将混乱梳理成几条清晰的选项，然后直觉性地指向最优路径。这是领导者和决策者最珍贵的才干之一。",
+      "careerHint": "适合战略层岗位：战略规划、创业、高管、咨询合伙人。"
+    }
+  ]
+}

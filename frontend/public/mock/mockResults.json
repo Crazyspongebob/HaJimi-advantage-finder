@@ -1,0 +1,172 @@
+{
+  "profiles": {
+    "profile-a": {
+      "topTalents": [
+        {
+          "rank": 1,
+          "name": "战略",
+          "domain": "strategic",
+          "domainName": "战略思维",
+          "description": "你天生能看到别人忽视的路径，喜欢把复杂问题拆解成清晰的解法。在混乱中，你总能找到最优路线。",
+          "evidence": "你在对话中提到会提前规划多套方案，遇到问题时第一反应是「先想想有哪几种可能」。",
+          "score": 92
+        },
+        {
+          "rank": 2,
+          "name": "竞争",
+          "domain": "influence",
+          "domainName": "影响力",
+          "description": "你需要比较，需要赢。这不是虚荣，而是你进步的燃料——你用他人的成就校准自己的目标。",
+          "evidence": "你提到做事时会参考行业最优秀的人，并把它当成自己努力的坐标。",
+          "score": 88
+        },
+        {
+          "rank": 3,
+          "name": "沟通",
+          "domain": "influence",
+          "domainName": "影响力",
+          "description": "你善于将想法变成故事，让抽象的概念变得生动有力。你的表达让人印象深刻。",
+          "evidence": "你描述复杂想法时，会自然地用比喻和例子——这是沟通才干者的典型特征。",
+          "score": 84
+        },
+        {
+          "rank": 4,
+          "name": "前瞻",
+          "domain": "strategic",
+          "domainName": "战略思维",
+          "description": "未来对你来说是燃料而非焦虑。你能清晰地描绘出还未发生的事，并被那个美好图景激励。",
+          "evidence": "你多次提到「如果...会怎样」，说明你习惯在脑海中模拟未来场景。",
+          "score": 80
+        },
+        {
+          "rank": 5,
+          "name": "统率",
+          "domain": "influence",
+          "domainName": "影响力",
+          "description": "你不回避紧张关系，甚至能在危机时刻主动接管局面。你的存在让团队感到有方向。",
+          "evidence": "你描述了在团队讨论陷入僵局时，你会自然地站出来推动决策。",
+          "score": 76
+        }
+      ],
+      "domainScores": {
+        "execution": 55,
+        "influence": 88,
+        "relationship": 62,
+        "strategic": 92
+      },
+      "summary": "你是一个极具战略眼光的影响者。你的才干组合让你天然适合需要「看大局、做决策、推动变化」的角色。最大的天赋是你能在别人还在讨论时，就已经看到了三步之后的棋局。"
+    },
+    "profile-b": {
+      "topTalents": [
+        {
+          "rank": 1,
+          "name": "责任",
+          "domain": "execution",
+          "domainName": "执行力",
+          "description": "你对承诺有近乎本能的使命感。一旦你说「我来做」，你会用所有资源确保它完成，不需要外部监督。",
+          "evidence": "你提到「答应的事情不做完不睡觉」，这正是责任才干最典型的表现。",
+          "score": 94
+        },
+        {
+          "rank": 2,
+          "name": "和谐",
+          "domain": "relationship",
+          "domainName": "关系建立",
+          "description": "你本能地寻求共识而非冲突。你善于找到不同意见之间的共同地带，让合作更顺畅。",
+          "evidence": "你描述自己在会议中会主动寻找各方都能接受的方案，而不是坚持己见。",
+          "score": 89
+        },
+        {
+          "rank": 3,
+          "name": "体谅",
+          "domain": "relationship",
+          "domainName": "关系建立",
+          "description": "你能感受到他人的情绪，即使他们没有开口。这种能力让你成为团队里最懂人心的那个人。",
+          "evidence": "你提到经常能「感觉到」同事不对劲，并主动去关心——这是体谅才干的核心特征。",
+          "score": 85
+        },
+        {
+          "rank": 4,
+          "name": "统筹",
+          "domain": "execution",
+          "domainName": "执行力",
+          "description": "你能在脑海中同时处理多个任务和资源，找到最优排列组合。复杂的项目让你兴奋而非焦虑。",
+          "evidence": "你描述整理项目方案时「把乱七八糟的需求梳理清楚」——典型的统筹才干。",
+          "score": 82
+        },
+        {
+          "rank": 5,
+          "name": "伯乐",
+          "domain": "relationship",
+          "domainName": "关系建立",
+          "description": "你对人的成长有天然的敏感度，你能看到别人身上的潜力，并真心想帮助他们实现它。",
+          "evidence": "你提到会花时间给新同事讲解，并从他们的成长中获得成就感。",
+          "score": 78
+        }
+      ],
+      "domainScores": {
+        "execution": 85,
+        "influence": 45,
+        "relationship": 90,
+        "strategic": 58
+      },
+      "summary": "你是一个高度可靠的关系建设者。你的才干让你成为团队的「稳定器」——总是完成承诺，照顾到每一个人的感受。你最大的价值，是让身边的人感到被看见、被支持。"
+    },
+    "profile-c": {
+      "topTalents": [
+        {
+          "rank": 1,
+          "name": "学习",
+          "domain": "strategic",
+          "domainName": "战略思维",
+          "description": "学习本身就是你的奖励。你被新知识的获取过程所激励，从零到精通的旅程比终点更令你兴奋。",
+          "evidence": "你提到会把感兴趣的主题「研究到底」，并享受这个探索过程本身。",
+          "score": 95
+        },
+        {
+          "rank": 2,
+          "name": "专注",
+          "domain": "execution",
+          "domainName": "执行力",
+          "description": "你能过滤掉噪音，把所有精力集中在最重要的目标上，并保持这种状态直到完成。",
+          "evidence": "你描述工作时会进入「心流」状态，外界干扰很难打断你。",
+          "score": 90
+        },
+        {
+          "rank": 3,
+          "name": "分析",
+          "domain": "strategic",
+          "domainName": "战略思维",
+          "description": "你本能地寻找证据、质疑假设、拆解数据。你不接受表面的答案，必须看到逻辑支撑。",
+          "evidence": "你提到做决策前一定要「把数据看明白」，不喜欢凭感觉行事。",
+          "score": 86
+        },
+        {
+          "rank": 4,
+          "name": "成就",
+          "domain": "execution",
+          "domainName": "执行力",
+          "description": "你有一种内置的完成驱动力。每天不做点什么，就感觉这天白过了。你是团队里那个「推着项目往前走」的人。",
+          "evidence": "你说「不做完这件事我睡不着觉」——典型的成就才干者的白天动力。",
+          "score": 83
+        },
+        {
+          "rank": 5,
+          "name": "思维",
+          "domain": "strategic",
+          "domainName": "战略思维",
+          "description": "你喜欢独处思考，脑子里总有一场场独白。这种深度反思让你能形成别人没有的独特见解。",
+          "evidence": "你提到喜欢在安静的时候「把一个问题想透」，思考对你来说是享受而非负担。",
+          "score": 79
+        }
+      ],
+      "domainScores": {
+        "execution": 82,
+        "influence": 48,
+        "relationship": 55,
+        "strategic": 90
+      },
+      "summary": "你是一个深度思考者和系统执行者。你既能把复杂问题想透彻，又能一步步把想法落地。这种组合在技术和产品领域极为罕见，让你天然适合构建真正有深度的解决方案。"
+    }
+  }
+}

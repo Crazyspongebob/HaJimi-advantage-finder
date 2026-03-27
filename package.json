@@ -1,0 +1,15 @@
+{
+  "name": "hakimi-advantage-finder",
+  "version": "1.0.0",
+  "description": "哈基米优势发现器 — Gallup-based career strengths chat app",
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c cyan,magenta \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "start": "concurrently -n backend,frontend -c cyan,magenta \"npm start --prefix backend\" \"npm run dev --prefix frontend\"",
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "backend": "npm run dev --prefix backend",
+    "frontend": "npm run dev --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
