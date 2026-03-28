@@ -262,3 +262,6 @@ cd backend && node server.js
 
 **Q: 如何只体验 UI 不调用 AI？**
 在首页点击「体验演示」进入演示模式，无需任何 API Key。
+
+📄 License
+MIT — feel free to fork and adapt for your own interview practice tools.
