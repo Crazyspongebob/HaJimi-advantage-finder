@@ -2,7 +2,7 @@
 // 使用 Web Speech API (SpeechRecognition) 实现语音转文字
 // 当浏览器不支持时，按钮自动隐藏
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react'
 
 // 检查浏览器支持
 const SpeechRecognition =
@@ -12,11 +12,14 @@ const SpeechRecognition =
  * @param {function} onResult   - 识别成功后回调 (text: string) => void
  * @param {boolean}  disabled   - 是否禁用
  * @param {string}   className  - 额外样式类
+ * @param {ref}      ref        - 外部可调用 { startListening, stopListening, isListening }
  */
-export default function VoiceButton({ onResult, disabled = false, className = '' }) {
+const VoiceButton = forwardRef(function VoiceButton({ onResult, disabled = false, className = '' }, ref) {
   const [isListening, setIsListening] = useState(false)
   const [errorMsg, setErrorMsg]       = useState('')
   const recognizerRef = useRef(null)
+
+  useImperativeHandle(ref, () => ({ startListening, stopListening, get isListening() { return isListening } }))
 
   // 浏览器不支持时不渲染
   if (!SpeechRecognition) return null
@@ -69,7 +72,7 @@ export default function VoiceButton({ onResult, disabled = false, className = ''
         type="button"
         onClick={isListening ? stopListening : startListening}
         disabled={disabled}
-        title={isListening ? '点击停止录音' : '点击说话'}
+        title={isListening ? '点击停止录音（或再按空格）' : '点击说话（或按空格键）'}
         className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 relative overflow-hidden"
         style={{
           background: isListening
@@ -122,4 +125,6 @@ export default function VoiceButton({ onResult, disabled = false, className = ''
       )}
     </div>
   )
-}
+})
+
+export default VoiceButton

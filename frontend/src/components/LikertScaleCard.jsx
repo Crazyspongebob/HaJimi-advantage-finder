@@ -1,5 +1,6 @@
 // LikertScaleCard.jsx — 盖洛普量表题卡片 (Mode B)
 // 显示 1-5 Likert 量表问题组，用户逐条评分后一键提交
+// 反向题自动翻转分数（后端已剥离标记，前端无感知）
 
 import React, { useState } from 'react'
 
@@ -12,24 +13,27 @@ const LABELS = {
 }
 
 /**
- * @param {string[]} questions    - Likert 陈述列表
- * @param {string}   themeName    - 当前才干主题中文名 (e.g. "成就")
- * @param {string}   themeEn      - 英文主题名 (e.g. "Achiever")
- * @param {function} onSubmit     - 提交回调 ({ theme, answers: number[] }) => void
- * @param {function} onSkip       - 跳过整个量表
- * @param {boolean}  disabled     - 提交中禁用
+ * @param {string[]} questions       - Likert 陈述列表（已剥离反向标记）
+ * @param {number[]} reverseIndices  - 需要翻转分数的题目索引列表（用户选5→提交1）
+ * @param {string}   themeName       - 当前才干主题中文名
+ * @param {string}   themeEn         - 英文主题名
+ * @param {function} onSubmit        - 提交回调 ({ theme, answers: number[] }) => void
+ * @param {function} onSkip          - 跳过整个量表
+ * @param {boolean}  disabled        - 提交中禁用
  */
 export default function LikertScaleCard({
   questions = [],
+  reverseIndices = [],
   themeName = '',
   themeEn = '',
   onSubmit,
   onSkip,
   disabled = false,
 }) {
-  const [answers, setAnswers] = useState({})   // { questionIndex: score }
+  const [answers, setAnswers] = useState({})   // { questionIndex: displayScore }
   const [submitted, setSubmitted] = useState(false)
 
+  const reverseSet = new Set(reverseIndices)
   const allAnswered = questions.length > 0 && questions.every((_, i) => answers[i] != null)
 
   function rate(index, score) {
@@ -40,7 +44,11 @@ export default function LikertScaleCard({
   function handleSubmit() {
     if (!allAnswered || submitted) return
     setSubmitted(true)
-    const answerArray = questions.map((_, i) => answers[i])
+    // Flip reverse-scored items: display score 5→1, 4→2, 3→3, 2→4, 1→5
+    const answerArray = questions.map((_, i) => {
+      const score = answers[i]
+      return reverseSet.has(i) ? 6 - score : score
+    })
     onSubmit?.({ theme: themeEn, answers: answerArray })
   }
 

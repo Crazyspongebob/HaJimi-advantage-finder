@@ -71,6 +71,14 @@ app.listen(PORT, () => {
   console.log('╚════════════════════════════════════════╝\n');
 });
 
+// 防止未捕获异常崩溃后端进程（导致 Vite proxy ECONNRESET）
+process.on('uncaughtException', (err) => {
+  console.error('[Server] 未捕获异常 (进程继续运行):', err.message, err.stack);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[Server] 未处理的 Promise rejection (进程继续运行):', reason);
+});
+
 // 进程退出时保存会话
 process.on('SIGINT', () => {
   console.log('\n[Server] 正在保存会话数据...');

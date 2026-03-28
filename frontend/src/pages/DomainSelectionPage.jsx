@@ -14,13 +14,20 @@ const DOMAINS = [
   { id: '医疗健康',   icon: '🏥', label: '医疗健康',   desc: '医疗器械、健康科技' },
   { id: '文化创意',   icon: '🎭', label: '文化创意',   desc: '影视、游戏、内容创作' },
 ]
+const CUSTOM_ID = '__custom__'
 
 function DomainSelectionPage() {
   const navigate = useNavigate()
   const { dispatch } = useChatContext()
   const [selected, setSelected] = useState([])
+  const [customText, setCustomText] = useState('')
+  const [showCustomInput, setShowCustomInput] = useState(false)
 
   function toggleDomain(id) {
+    if (id === CUSTOM_ID) {
+      setShowCustomInput(v => !v)
+      return
+    }
     setSelected(prev => {
       if (prev.includes(id)) return prev.filter(d => d !== id)
       if (prev.length >= 2) return prev  // 最多 2 个
@@ -28,10 +35,20 @@ function DomainSelectionPage() {
     })
   }
 
+  // effective selected list: replace __custom__ with the typed text if present
+  function getEffectiveSelected() {
+    const base = selected.filter(s => s !== CUSTOM_ID)
+    if (showCustomInput && customText.trim()) return [...base, customText.trim()].slice(0, 2)
+    return base
+  }
+
   function handleConfirm() {
-    dispatch({ type: ActionTypes.SET_DOMAINS, payload: selected })
+    dispatch({ type: ActionTypes.SET_DOMAINS, payload: getEffectiveSelected() })
     navigate('/jobs')
   }
+
+  const effectiveSelected = getEffectiveSelected()
+  const canSelectMore = effectiveSelected.length < 2
 
   return (
     <div className="min-h-screen pb-28" style={{ background: '#0F172A' }}>
@@ -63,7 +80,7 @@ function DomainSelectionPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {DOMAINS.map(domain => {
             const isSelected = selected.includes(domain.id)
-            const isDisabled = !isSelected && selected.length >= 2
+            const isDisabled = !isSelected && !canSelectMore
 
             return (
               <button
@@ -123,19 +140,56 @@ function DomainSelectionPage() {
               </button>
             )
           })}
+          {/* 其他：自定义领域 */}
+          {(() => {
+            const isActive = showCustomInput
+            const isDisabled = !isActive && !canSelectMore
+            return (
+              <button
+                onClick={() => toggleDomain(CUSTOM_ID)}
+                disabled={isDisabled}
+                className="relative flex flex-col items-center text-center px-3 py-5 rounded-2xl transition-all duration-200"
+                style={{
+                  background: isActive ? 'rgba(139,92,246,0.12)' : isDisabled ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.04)',
+                  border: isActive ? '1.5px solid rgba(139,92,246,0.5)' : isDisabled ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(255,255,255,0.08)',
+                  opacity: isDisabled ? 0.35 : 1,
+                  cursor: isDisabled ? 'not-allowed' : 'pointer',
+                }}
+              >
+                <span className="text-3xl mb-2">✏️</span>
+                <span className="font-semibold text-sm" style={{ color: isActive ? '#c4b5fd' : 'rgba(255,255,255,0.8)' }}>其他</span>
+                <span className="text-xs mt-1 leading-tight" style={{ color: 'rgba(255,255,255,0.35)' }}>自定义领域</span>
+              </button>
+            )
+          })()}
         </div>
+
+        {/* 自定义领域输入框 */}
+        {showCustomInput && (
+          <div className="mt-3 px-1">
+            <input
+              type="text"
+              value={customText}
+              onChange={e => setCustomText(e.target.value)}
+              maxLength={20}
+              placeholder="输入你感兴趣的领域，如：新能源、电商运营..."
+              className="w-full px-4 py-3 rounded-xl text-sm"
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(139,92,246,0.4)', color: '#FAFAF8', outline: 'none' }}
+            />
+          </div>
+        )}
 
         {/* 选中状态提示 */}
         <div className="mt-5 text-center">
-          {selected.length === 0 && (
+          {effectiveSelected.length === 0 && (
             <p className="text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>点击卡片选择你感兴趣的方向</p>
           )}
-          {selected.length > 0 && selected.length < 2 && (
+          {effectiveSelected.length > 0 && effectiveSelected.length < 2 && (
             <p className="text-sm" style={{ color: '#C9A84C' }}>
-              已选 {selected.length} 个，还可以再选 {2 - selected.length} 个
+              已选 {effectiveSelected.length} 个，还可以再选 {2 - effectiveSelected.length} 个
             </p>
           )}
-          {selected.length === 2 && (
+          {effectiveSelected.length === 2 && (
             <p className="text-sm font-medium" style={{ color: '#E2C97E' }}>
               完美！已选择 2 个领域
             </p>
@@ -151,20 +205,20 @@ function DomainSelectionPage() {
         <div className="max-w-2xl mx-auto">
           <button
             onClick={handleConfirm}
-            disabled={selected.length === 0}
+            disabled={effectiveSelected.length === 0}
             className="w-full py-4 rounded-full font-bold text-base transition-all duration-200"
             style={{
-              background: selected.length === 0
+              background: effectiveSelected.length === 0
                 ? 'rgba(255,255,255,0.06)'
                 : 'linear-gradient(135deg, #C9A84C 0%, #D4B46A 50%, #B8960C 100%)',
-              color: selected.length === 0 ? 'rgba(255,255,255,0.25)' : '#0F172A',
-              cursor: selected.length === 0 ? 'not-allowed' : 'pointer',
-              boxShadow: selected.length === 0 ? 'none' : '0 4px 15px rgba(201,168,76,0.3)',
+              color: effectiveSelected.length === 0 ? 'rgba(255,255,255,0.25)' : '#0F172A',
+              cursor: effectiveSelected.length === 0 ? 'not-allowed' : 'pointer',
+              boxShadow: effectiveSelected.length === 0 ? 'none' : '0 4px 15px rgba(201,168,76,0.3)',
             }}
           >
-            {selected.length === 0
+            {effectiveSelected.length === 0
               ? '请先选择至少 1 个领域'
-              : `获取岗位推荐 → (${selected.join(' + ')})`}
+              : `获取岗位推荐 → (${effectiveSelected.join(' + ')})`}
           </button>
         </div>
       </div>

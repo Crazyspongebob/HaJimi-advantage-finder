@@ -8,25 +8,25 @@ import { hakimiQuotes } from '../utils/mockData'
 function CatSilhouette() {
   return (
     <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-      <circle cx="100" cy="100" r="100" fill="#1E293B"/>
-      <ellipse cx="100" cy="130" rx="45" ry="40" fill="#C9A84C" opacity="0.9"/>
-      <circle cx="100" cy="82" r="32" fill="#C9A84C" opacity="0.9"/>
-      <polygon points="74,58 65,38 86,54" fill="#C9A84C" opacity="0.9"/>
-      <polygon points="126,58 135,38 114,54" fill="#C9A84C" opacity="0.9"/>
-      <polygon points="75,56 68,44 84,54" fill="#E2C97E" opacity="0.7"/>
-      <polygon points="125,56 132,44 116,54" fill="#E2C97E" opacity="0.7"/>
-      <ellipse cx="89" cy="80" rx="5" ry="6" fill="#0F172A"/>
-      <ellipse cx="111" cy="80" rx="5" ry="6" fill="#0F172A"/>
-      <circle cx="90" cy="79" r="1.5" fill="white"/>
-      <circle cx="112" cy="79" r="1.5" fill="white"/>
-      <polygon points="100,88 97,92 103,92" fill="#E8A0B4"/>
-      <line x1="60" y1="86" x2="90" y2="90" stroke="white" strokeWidth="1" opacity="0.7"/>
-      <line x1="60" y1="91" x2="90" y2="92" stroke="white" strokeWidth="1" opacity="0.7"/>
-      <line x1="110" y1="90" x2="140" y2="86" stroke="white" strokeWidth="1" opacity="0.7"/>
-      <line x1="110" y1="92" x2="140" y2="91" stroke="white" strokeWidth="1" opacity="0.7"/>
-      <ellipse cx="76" cy="165" rx="14" ry="10" fill="#C9A84C" opacity="0.9"/>
-      <ellipse cx="124" cy="165" rx="14" ry="10" fill="#C9A84C" opacity="0.9"/>
-      <path d="M145 145 Q175 120 165 100 Q155 85 148 105" stroke="#C9A84C" strokeWidth="8" fill="none" strokeLinecap="round" opacity="0.9"/>
+      <circle cx="100" cy="100" r="100" fill="#1E293B" />
+      <ellipse cx="100" cy="130" rx="45" ry="40" fill="#C9A84C" opacity="0.9" />
+      <circle cx="100" cy="82" r="32" fill="#C9A84C" opacity="0.9" />
+      <polygon points="74,58 65,38 86,54" fill="#C9A84C" opacity="0.9" />
+      <polygon points="126,58 135,38 114,54" fill="#C9A84C" opacity="0.9" />
+      <polygon points="75,56 68,44 84,54" fill="#E2C97E" opacity="0.7" />
+      <polygon points="125,56 132,44 116,54" fill="#E2C97E" opacity="0.7" />
+      <ellipse cx="89" cy="80" rx="5" ry="6" fill="#0F172A" />
+      <ellipse cx="111" cy="80" rx="5" ry="6" fill="#0F172A" />
+      <circle cx="90" cy="79" r="1.5" fill="white" />
+      <circle cx="112" cy="79" r="1.5" fill="white" />
+      <polygon points="100,88 97,92 103,92" fill="#E8A0B4" />
+      <line x1="60" y1="86" x2="90" y2="90" stroke="white" strokeWidth="1" opacity="0.7" />
+      <line x1="60" y1="91" x2="90" y2="92" stroke="white" strokeWidth="1" opacity="0.7" />
+      <line x1="110" y1="90" x2="140" y2="86" stroke="white" strokeWidth="1" opacity="0.7" />
+      <line x1="110" y1="92" x2="140" y2="91" stroke="white" strokeWidth="1" opacity="0.7" />
+      <ellipse cx="76" cy="165" rx="14" ry="10" fill="#C9A84C" opacity="0.9" />
+      <ellipse cx="124" cy="165" rx="14" ry="10" fill="#C9A84C" opacity="0.9" />
+      <path d="M145 145 Q175 120 165 100 Q155 85 148 105" stroke="#C9A84C" strokeWidth="8" fill="none" strokeLinecap="round" opacity="0.9" />
     </svg>
   )
 }
@@ -99,7 +99,7 @@ function WelcomePage() {
             </h1>
 
             <p className="text-lg mb-10 max-w-md lg:max-w-none leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
-              通过与哈基米的轻松对话，5 分钟揭示你<br className="hidden lg:block"/>
+              通过与哈基米的轻松对话，5 分钟揭示你<br className="hidden lg:block" />
               独一无二的才干组合和最匹配的职业方向。
             </p>
 
@@ -143,6 +143,30 @@ function WelcomePage() {
                   {f}
                 </span>
               ))}
+            </div>
+
+            {/* Gallup intro */}
+            <div
+              className="rounded-xl px-5 py-4 mt-6 max-w-md text-left"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}
+            >
+              <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: 'rgba(201,168,76,0.7)' }}>关于盖洛普 CliftonStrengths</p>
+              <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                由盖洛普公司历时 40 年、研究逾 200 万人开发的才干评估体系，将人类优势归纳为
+                <span style={{ color: 'rgba(255,255,255,0.7)' }}> 34 个才干主题</span>，
+                分布在执行力、影响力、关系建立、战略思维四大领域。
+                全球已有超过 <span style={{ color: 'rgba(255,255,255,0.7)' }}>2600 万人</span> 完成测评，
+                广泛应用于高校职业规划与企业人才发展。
+              </p>
+              <a
+                href="https://www.gallup.com/cliftonstrengths/zh/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs mt-2 transition-opacity hover:opacity-80"
+                style={{ color: 'rgba(201,168,76,0.65)' }}
+              >
+                了解 34 才干完整介绍 →
+              </a>
             </div>
           </div>
 

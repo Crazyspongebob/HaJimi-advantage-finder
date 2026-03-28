@@ -4,8 +4,8 @@
 const fs = require('fs');
 const path = require('path');
 
-// 题库根目录（相对于 backend/，向上两级到 BS-Hajimi）
-const BANK_ROOT = path.resolve(__dirname, '../../..', 'Gallup_Strengths_Bank');
+// 题库根目录（相对于 backend/services/，向上两级到项目根目录）
+const BANK_ROOT = path.resolve(__dirname, '../..', 'Gallup_Strengths_Bank');
 
 // 34个才干主题的映射（英文名 → 中文名 + 领域）
 const THEME_MAP = {
@@ -58,8 +58,8 @@ function extractModeAQuestions(content, eduLevel) {
   if (!match) return [];
 
   const questions = [];
-  // Support both "**Question N:**" and "**QN:**" formats
-  const qRegex = /- \*\*(?:Question\s*)?\w+:\*\*\s*[""""]?(.+?)(?:\s*`\[Signal[^\n]*)?[""""]?\s*$/gm;
+  // Matches: "- **Topic N:**" or "- **Question N:**" or "- **QN:**"
+  const qRegex = /- \*\*(?:Topic|Question|Q)\s*\d*:?\*\*\s*[""""]?(.+?)(?:\s*`\[Signal[^\n]*)?[""""]?\s*$/gm;
   let m;
   while ((m = qRegex.exec(match[0])) !== null) {
     const q = m[1].replace(/`\[Signal[^\]]*\]`?/g, '').replace(/[""""`]/g, '').trim();
@@ -71,21 +71,28 @@ function extractModeAQuestions(content, eduLevel) {
 /**
  * 从单个维度 md 文件中提取 Mode B 量表语句
  * @param {string} content - 文件内容
- * @returns {string[]}
+ * @returns {{ statements: string[], reverseIndices: number[] }}
  */
 function extractModeBStatements(content) {
   const sectionRegex = /## \[Mode B\][^]*?(?=## |$)/i;
   const match = content.match(sectionRegex);
-  if (!match) return [];
+  if (!match) return { statements: [], reverseIndices: [] };
 
   const statements = [];
+  const reverseIndices = [];
   const stRegex = /^\d+\.\s+(.+)/gm;
   let m;
   while ((m = stRegex.exec(match[0])) !== null) {
-    const s = m[1].replace(/[^\x00-\x7F\u4e00-\u9fff\u3000-\u303f\uff00-\uffef，。？！、：；""''（）【】…]/g, '').trim();
+    let raw = m[1].trim();
+    const isReverse = /\(反向\)/.test(raw);
+    if (isReverse) {
+      reverseIndices.push(statements.length);
+      raw = raw.replace(/\(反向\)\s*/g, '').trim();
+    }
+    const s = raw.replace(/\s*\[\s*\]\s*$/, '').replace(/[^\x00-\x7F\u4e00-\u9fff\u3000-\u303f\uff00-\uffef，。？！、：；""''（）【】…]/g, '').trim();
     if (s.length > 5) statements.push(s);
   }
-  return statements;
+  return { statements, reverseIndices };
 }
 
 // 缓存解析结果
@@ -115,13 +122,15 @@ function parseBank() {
 
       try {
         const content = fs.readFileSync(path.join(BANK_ROOT, 'dimensions', file), 'utf8');
+        const { statements, reverseIndices } = extractModeBStatements(content);
         dimensions[themeName] = {
           name: themeName,
           zh: info.zh,
           domain: info.domain,
           ugQuestions: extractModeAQuestions(content, 'ug'),
           pgQuestions: extractModeAQuestions(content, 'pg'),
-          scaleStatements: extractModeBStatements(content),
+          scaleStatements: statements,
+          scaleReverseIndices: reverseIndices,
         };
       } catch (e) {
         // 单个文件读取失败不影响整体
@@ -233,6 +242,14 @@ function getScaleQuestionsForTheme(themeEn) {
 }
 
 /**
+ * Get reverse indices for scale statements of a theme
+ */
+function getScaleReverseIndicesForTheme(themeEn) {
+  const bank = parseBank();
+  return bank[themeEn]?.scaleReverseIndices || [];
+}
+
+/**
  * Get theme info (Chinese name + domain)
  */
 function getThemeInfo(themeEn) {
@@ -250,5 +267,6 @@ module.exports = {
   getThemeOrder,
   getSeedsForTheme,
   getScaleQuestionsForTheme,
+  getScaleReverseIndicesForTheme,
   getThemeInfo,
 };

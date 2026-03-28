@@ -18,15 +18,19 @@ try {
   buildChatSystemPrompt = () => CHAT_SYSTEM_PROMPT;
 }
 
-// 主模型：Kimi-K2.5；fallback：GLM-4.7-flash
+// 主模型：Kimi-K2.5（AIping）；fallback：llm-default（通用兜底）
 const CHAT_PRIMARY_MODEL = process.env.CHAT_LLM_MODEL || 'kimi-k2-5';
-const CHAT_FALLBACK_MODEL = 'glm-4.7-flash';
+const CHAT_FALLBACK_MODEL = process.env.CHAT_LLM_FALLBACK || 'llm-default';
 
 const GREETING_MESSAGE = `喵~ 你好呀！我是哈基米，一只很爱思考的猫猫 🐱
 
 我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~
 
-咱们来聊5分钟，我会通过轻松的对话找到你最闪耀的才干！
+**关于这次探索：**
+- 🕐 充分探索通常需要 **15-20 分钟**（当然随时可以提前生成报告）
+- 🗺️ 我会通过闲聊+量表两种方式，覆盖执行力、影响力、关系建立、战略思维四大维度
+- 💬 说「换一个」可以跳过不想聊的话题
+- 如果只聊 5 轮就结束，结论可能不够严谨哦~
 
 先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~`;
 
@@ -36,6 +40,31 @@ const SKIP_TRIGGERS = [
 ];
 
 // ── 工具函数 ──────────────────────────────────────────────
+
+/** Fisher-Yates shuffle (in-place) */
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/**
+ * Pick n random scale questions, preserving reverse-index mapping.
+ * @returns {{ questions: string[], reverseIndices: number[] }}
+ */
+function pickRandomScaleQuestions(allStatements, allReverseSet, n = 6) {
+  const indices = allStatements.map((_, i) => i);
+  shuffle(indices);
+  const picked = indices.slice(0, Math.min(n, indices.length));
+  const questions = picked.map(i => allStatements[i]);
+  const reverseIndices = picked.reduce((acc, origIdx, newIdx) => {
+    if (allReverseSet.has(origIdx)) acc.push(newIdx);
+    return acc;
+  }, []);
+  return { questions, reverseIndices };
+}
 
 function detectSkip(message) {
   const lower = message.toLowerCase().trim();
@@ -157,37 +186,53 @@ function ensureAssessmentState(session) {
 
 function advanceTheme(state) {
   const nextIndex = state.themeIndex + 1;
-  const nextTheme = state.themeOrder[nextIndex] || null;
+  const wrappedIndex = nextIndex >= (state.themeOrder?.length || 34) ? 0 : nextIndex;
+  const nextTheme = state.themeOrder[wrappedIndex] || null;
   console.log(`[Chat] Moving to next theme: ${state.currentTheme} → ${nextTheme}`);
-  return { mode: 'A', themeIndex: nextIndex, currentTheme: nextTheme, seedIndex: 0, consecutiveSingleReplies: 0 };
+  // Random seed start so topics don't always begin with question 1
+  return { mode: 'A', themeIndex: wrappedIndex, currentTheme: nextTheme, seedIndex: Math.floor(Math.random() * 3), consecutiveSingleReplies: 0 };
 }
 
 function buildSeedPrompt(seed, themeZh, domain, summary, eduLevel) {
   return `
 [当前探测维度]: ${themeZh}（${domain}领域）
 [教育背景]: ${eduLevel === 'pg' ? '研究生' : '本科生'}
-[对话摘要]: ${summary || '对话刚开始'}
+[最近对话摘要]: ${summary || '对话刚开始'}
 
-[话题种子（请基于用户上下文自然发挥，不要照搬原句）]:
+[参考话题种子（仅供参考，优先级低于用户最新回答）]:
 "${seed}"
 
-请你作为哈基米，结合上面的对话摘要和这个话题种子，用朋友聊天的方式自然引出这个话题。
-如果用户之前已经透露了相关倾向，请在新问题中呼应。`;
+## 关键指令
+1. **首先**：仔细阅读用户的最新一条消息。如果用户提供了有价值的内容（超过3个字），请**直接追问用户刚才说的具体细节**，不要切换话题。
+2. **其次**：只有当用户的回答非常简短、模糊或与才干探测无关时，才参考上方话题种子引导新方向。
+3. 每次只问一个具体问题，不要问多个。`;
 }
 
 // ── POST /api/chat ──────────────────────────────────────────
 
 router.post('/', async (req, res, next) => {
   try {
-    const { sessionId: existingSessionId, message, history = [], scaleAnswer } = req.body;
+    const { sessionId: existingSessionId, message, history = [], scaleAnswer, persona } = req.body;
 
     // ── 初始问候 ─────────────────────────────────────────────
-    if (!message || message.trim() === '') {
+    if (!scaleAnswer && (!message || message.trim() === '')) {
       const session = sessionService.createSession();
-      sessionService.addMessage(session.sessionId, { role: 'assistant', content: GREETING_MESSAGE });
+      const greetingName = persona?.name || '哈基米';
+      const dynamicGreeting = `喵~ 你好呀！我是${greetingName}，${persona?.description || '一只很爱思考的猫猫'} 🐱
+
+我最近在研究一件事——每个人都有自己独特的天赋，只是有时候需要一只猫猫来帮你发现它喵~
+
+**关于这次探索：**
+- 🕐 充分探索通常需要 **15-20 分钟**（当然随时可以提前生成报告）
+- 🗺️ 我会通过闲聊+量表两种方式，覆盖执行力、影响力、关系建立、战略思维四大维度
+- 💬 说「换一个」可以跳过不想聊的话题
+- 如果只聊 5 轮就结束，结论可能不够严谨哦~
+
+先说说：**你是本科生还是研究生？** 这样我能用最适合你的方式来聊~`;
+      sessionService.addMessage(session.sessionId, { role: 'assistant', content: dynamicGreeting });
       return res.json({
         sessionId: session.sessionId,
-        reply: GREETING_MESSAGE,
+        reply: dynamicGreeting,
         isComplete: false,
         readyForReport: false,
         roundCount: 0,
@@ -206,6 +251,42 @@ router.post('/', async (req, res, next) => {
     session = ensureAssessmentState(session);
     let state = session.assessmentState;
 
+    // ── 切换量表模式（__switch_to_scale__） ──────────────────
+    if (message.trim() === '__switch_to_scale__') {
+      const theme = state.currentTheme || state.themeOrder?.[state.themeIndex || 0] || 'Achiever';
+      const allStatements = gallupService.getScaleQuestionsForTheme(theme);
+      const allReverseSet = new Set(gallupService.getScaleReverseIndicesForTheme(theme));
+      let scaleQuestions, reverseIndices;
+      if (allStatements.length > 0) {
+        ({ questions: scaleQuestions, reverseIndices } = pickRandomScaleQuestions(allStatements, allReverseSet, 6));
+      } else {
+        scaleQuestions = [
+          '我经常主动设定清晰的目标并全力以赴达成它',
+          '我喜欢将复杂的工作拆分成有序的步骤来执行',
+          '当我承诺做一件事时，我会想方设法完成，即使遇到挫折',
+          '我通常是团队中推动进度、督促结果的人',
+          '完成任务给我带来的满足感比其他任何事都强',
+        ];
+        reverseIndices = [];
+      }
+      const themeInfo = gallupService.getThemeInfo(theme) || { zh: '才干探索', domain: 'execution' };
+      sessionService.updateAssessmentState(session.sessionId, { mode: 'B' });
+      return res.json({
+        sessionId: session.sessionId,
+        reply: `喵~ 好的！切换到量表模式啦~ 对于以下几个说法，你的感受是 1-5 分？\n\n（1=完全不同意，5=非常同意）`,
+        mode: 'B',
+        scaleQuestions,
+        reverseIndices,
+        currentTheme: theme,
+        currentThemeZh: themeInfo.zh,
+        skipDetected: false,
+        isComplete: false,
+        readyForReport: false,
+        roundCount: state.roundCount || 0,
+        progress: estimateProgress(session.messages?.length || 0),
+      });
+    }
+
     // ── 量表答案提交 ─────────────────────────────────────────
     if (scaleAnswer?.theme && Array.isArray(scaleAnswer.answers)) {
       const { theme: scaleTheme, answers } = scaleAnswer;
@@ -222,10 +303,20 @@ router.post('/', async (req, res, next) => {
       const seed = seeds[0] || null;
       const estimated = estimateProgress(session.messages?.length || 0);
 
+      const nextThemeInfo = nextTheme ? gallupService.getThemeInfo(nextTheme) : { zh: null };
+      // 静态过渡消息（不调用LLM，避免会话状态被重置）
+      const scaleThemeZh = gallupService.getThemeInfo(scaleTheme)?.zh || scaleTheme;
+      const transitionLines = [
+        `收到啦！「${scaleThemeZh}」的量表已经记录好了，谢谢你认真作答喵~ 🐾`,
+        nextThemeInfo.zh ? `我们继续聊聊别的～` : `我们继续探索吧～`,
+        seed ? seed : '',
+      ].filter(Boolean);
+      const transitionReply = transitionLines.join(' ');
+      sessionService.addMessage(session.sessionId, { role: 'assistant', content: transitionReply });
       return res.json({
         sessionId: session.sessionId,
-        reply: seed ? `好的~ 咱们继续聊别的！喵~ ${seed}` : '好的，咱们继续探索吧！喵~',
-        mode: 'A', currentTheme: nextTheme, skipDetected: false,
+        reply: transitionReply,
+        mode: 'A', currentTheme: nextTheme, currentThemeZh: nextThemeInfo.zh, skipDetected: false,
         isComplete: false, readyForReport: false,
         roundCount: state.roundCount || 0,
         progress: estimated,
@@ -266,6 +357,7 @@ router.post('/', async (req, res, next) => {
       state = session.assessmentState;
 
       const nextTheme = state.currentTheme;
+      const skipThemeInfo = nextTheme ? gallupService.getThemeInfo(nextTheme) : { zh: null };
       const seeds = nextTheme ? gallupService.getSeedsForTheme(nextTheme, session.eduLevel || 'ug') : [];
       const seed = seeds[0] || null;
       const skipReply = encouragement + (seed ? `好的，咱们换个话题~ 喵~ ${seed}` : '好的，咱们换个话题~ 喵~');
@@ -273,7 +365,7 @@ router.post('/', async (req, res, next) => {
 
       return res.json({
         sessionId: session.sessionId, reply: skipReply,
-        mode: 'A', currentTheme: nextTheme, skipDetected: true,
+        mode: 'A', currentTheme: nextTheme, currentThemeZh: skipThemeInfo.zh, skipDetected: true,
         isComplete: false, readyForReport: false,
         roundCount: state.roundCount || 0,
         progress: estimateProgress(session.messages?.length || 0),
@@ -283,12 +375,28 @@ router.post('/', async (req, res, next) => {
     // ── Mode B：返回量表题 ────────────────────────────────────
     if (state.mode === 'B') {
       const theme = state.currentTheme;
-      const scaleQuestions = theme ? gallupService.getScaleQuestionsForTheme(theme) : [];
+      const allStatementsB = theme ? gallupService.getScaleQuestionsForTheme(theme) : [];
+      const allReverseSetB = new Set(theme ? gallupService.getScaleReverseIndicesForTheme(theme) : []);
+      let scaleQuestionsB, reverseIndicesB;
+      if (allStatementsB.length > 0) {
+        ({ questions: scaleQuestionsB, reverseIndices: reverseIndicesB } = pickRandomScaleQuestions(allStatementsB, allReverseSetB, 6));
+      } else {
+        scaleQuestionsB = [
+          '我经常主动设定清晰的目标并全力以赴达成它',
+          '我喜欢将复杂的工作拆分成有序的步骤来执行',
+          '当我承诺做一件事时，我会想方设法完成，即使遇到挫折',
+          '我通常是团队中推动进度、督促结果的人',
+          '完成任务给我带来的满足感比其他任何事都强',
+        ];
+        reverseIndicesB = [];
+      }
+      const modeBThemeInfo = theme ? gallupService.getThemeInfo(theme) : { zh: '才干探索' };
       console.log(`[Chat] Mode B for theme: ${theme}`);
       return res.json({
         sessionId: session.sessionId,
         reply: `喵~ 让我用一种更精准的方式了解你！对于以下几个说法，你的感受是 1-5 分？\n\n（1=完全不同意，5=非常同意）`,
-        mode: 'B', scaleQuestions, currentTheme: theme, skipDetected: false,
+        mode: 'B', scaleQuestions: scaleQuestionsB, reverseIndices: reverseIndicesB,
+        currentTheme: theme, currentThemeZh: modeBThemeInfo.zh, skipDetected: false,
         isComplete: false, readyForReport: false,
         roundCount: state.roundCount || 0,
         progress: estimateProgress(session.messages?.length || 0),
@@ -323,13 +431,13 @@ router.post('/', async (req, res, next) => {
       roundCount: state.roundCount || 0,
     };
 
-    let systemPrompt = buildChatSystemPrompt(eduLevel, signalState);
+    let systemPrompt = buildChatSystemPrompt(eduLevel, signalState, persona);
 
     if (currentTheme) {
       const themeInfo = gallupService.getThemeInfo(currentTheme);
       const seeds = gallupService.getSeedsForTheme(currentTheme, eduLevel);
-      const seedIndex = state.seedIndex || 0;
-      const seed = seeds[seedIndex] || seeds[0] || null;
+      const seedIndex = state.seedIndex != null ? state.seedIndex : Math.floor(Math.random() * Math.max(1, seeds.length));
+      const seed = seeds[seedIndex % seeds.length] || seeds[0] || null;
 
       if (seed) {
         systemPrompt = systemPrompt + '\n\n' + buildSeedPrompt(seed, themeInfo.zh, themeInfo.domain, state.conversationSummary || '', eduLevel);
@@ -347,10 +455,28 @@ router.post('/', async (req, res, next) => {
     }
 
     // ── 调用 LLM (Kimi-K2.5 → fallback) ─────────────────────
-    const llmResponse = await llmService.chatWithFallback(
-      conversationMessages, systemPrompt,
-      CHAT_PRIMARY_MODEL, CHAT_FALLBACK_MODEL
-    );
+    // Fix: wrap LLM call so API failures return a graceful reply instead of 500
+    let llmResponse;
+    try {
+      llmResponse = await llmService.chatWithFallback(
+        conversationMessages, systemPrompt,
+        CHAT_PRIMARY_MODEL, CHAT_FALLBACK_MODEL
+      );
+    } catch (llmErr) {
+      console.error('[Chat] LLM调用失败:', llmErr.message);
+      const fallbackReply = '喵~ 哈基米现在网络有点不稳定，请稍后再试或检查API密钥配置 😿';
+      sessionService.addMessage(session.sessionId, { role: 'assistant', content: fallbackReply });
+      return res.status(200).json({
+        sessionId: session.sessionId,
+        reply: fallbackReply,
+        isComplete: false, readyForReport: false,
+        roundCount: state.roundCount || 0,
+        mode: state.mode || 'A', currentTheme: state.currentTheme || null,
+        skipDetected: false,
+        progress: estimateProgress(session.messages?.length || 0),
+        llmError: llmErr.message, // included for debugging, won't crash frontend
+      });
+    }
 
     // ── 解析信号标签 + ReadyForReport ────────────────────────
     const { signals, readyForReport: aiReadyForReport, text: afterSignals } = parseSignalsFromAI(llmResponse.content);
@@ -387,8 +513,8 @@ router.post('/', async (req, res, next) => {
     }
 
     // ── 判断是否完成（最少5轮） ───────────────────────────────
-    const MIN_ROUNDS = 5;
-    const MAX_ROUNDS = 15;
+    const MIN_ROUNDS = 5;   // AI cannot declare ready before this many rounds
+    const MAX_ROUNDS = 30;  // Hard limit — user can always talk more freely
     let finalIsComplete = false;
 
     if (newRoundCount >= MAX_ROUNDS) {
@@ -405,12 +531,18 @@ router.post('/', async (req, res, next) => {
     // ── 最终进度 ──────────────────────────────────────────────
     const finalProgress = parsedProgress || estimateProgress(session.messages?.length || 0);
 
+    // 更新对话摘要（取最近用户消息的前100字）
+    const newSummary = message.length > 3
+      ? message.substring(0, 100)
+      : (state.conversationSummary || '');
+
     // 保存状态
     sessionService.updateAssessmentState(session.sessionId, {
       signalScores: updatedSignalScores,
       confirmedThemes: updatedConfirmed,
       signalTags: updatedSignalTags,
       roundCount: newRoundCount,
+      conversationSummary: newSummary,
     });
     sessionService.addMessage(session.sessionId, { role: 'assistant', content: replyText });
     sessionService.updateSession(session.sessionId, { progress: finalProgress, isComplete: finalIsComplete });
@@ -418,6 +550,7 @@ router.post('/', async (req, res, next) => {
     session = sessionService.getSession(session.sessionId);
     state = session.assessmentState || state;
 
+    const finalThemeInfo = state.currentTheme ? gallupService.getThemeInfo(state.currentTheme) : { zh: null };
     res.json({
       sessionId: session.sessionId,
       reply: replyText,
@@ -426,6 +559,7 @@ router.post('/', async (req, res, next) => {
       roundCount: newRoundCount,
       mode: state.mode || 'A',
       currentTheme: state.currentTheme || null,
+      currentThemeZh: finalThemeInfo.zh,
       skipDetected: false,
       progress: finalProgress,
     });

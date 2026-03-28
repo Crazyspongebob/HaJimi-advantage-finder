@@ -113,12 +113,13 @@ function JobCard({ job, index }) {
 
       {/* 了解更多 */}
       <button
+        onClick={() => window.open(`https://www.zhipin.com/web/geek/job?query=${encodeURIComponent(title)}`, '_blank')}
         className="mt-3 w-full py-2 rounded-xl text-sm font-medium transition-all duration-200"
         style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#9B7A1F', background: 'transparent' }}
         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(201,168,76,0.06)' }}
         onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
       >
-        了解更多 →
+        去 BOSS直聘 找岗位 →
       </button>
     </div>
   )
@@ -225,13 +226,22 @@ function JobRecommendationPage() {
             <div className="text-center py-12" style={{ color: 'rgba(15,23,42,0.35)' }}>
               <div className="text-5xl mb-4">🐱</div>
               <p>暂时没有匹配的岗位，哈基米再想想...</p>
-              <button
-                onClick={fetchJobs}
-                className="mt-4 px-6 py-2 rounded-full text-sm font-medium"
-                style={{ background: 'linear-gradient(135deg, #C9A84C, #B8960C)', color: '#0F172A' }}
-              >
-                重新推荐
-              </button>
+              <div className="flex gap-3 justify-center mt-4">
+                <button
+                  onClick={fetchJobs}
+                  className="px-5 py-2 rounded-full text-sm font-medium"
+                  style={{ background: 'linear-gradient(135deg, #C9A84C, #B8960C)', color: '#0F172A' }}
+                >
+                  重新推荐
+                </button>
+                <button
+                  onClick={() => navigate('/domain')}
+                  className="px-5 py-2 rounded-full text-sm font-medium"
+                  style={{ border: '1px solid rgba(15,23,42,0.2)', color: 'rgba(15,23,42,0.6)', background: 'transparent' }}
+                >
+                  重选领域
+                </button>
+              </div>
             </div>
           )}
 
@@ -255,13 +265,13 @@ function JobRecommendationPage() {
         >
           <div className="max-w-2xl mx-auto flex gap-3">
             <button
-              onClick={() => { dispatch({ type: ActionTypes.RESET_SESSION }); navigate('/') }}
+              onClick={() => navigate('/domain')}
               className="flex-1 py-3 rounded-xl font-semibold text-sm transition-colors"
               style={{ border: '1px solid rgba(15,23,42,0.12)', color: 'rgba(15,23,42,0.6)', background: 'transparent' }}
               onMouseEnter={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.04)' }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
             >
-              重新探索
+              换个领域
             </button>
             <button
               onClick={handleShare}

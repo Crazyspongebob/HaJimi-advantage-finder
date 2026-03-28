@@ -24,7 +24,7 @@ export function useApi() {
   const { isDemoMode, simulateDelay, getNextDemoResponse } = useDemoMode()
 
   // ── 发送聊天消息 POST /api/chat ─────────────────────────────
-  async function sendMessage(sessionId, message, history = [], scaleAnswer = null) {
+  async function sendMessage(sessionId, message, history = [], scaleAnswer = null, persona = null) {
     if (isDemoMode) {
       await simulateDelay(900)
       const entry = getNextDemoResponse()
@@ -46,13 +46,13 @@ export function useApi() {
     }
     return fetchWithErrorHandling('/api/chat', {
       method: 'POST',
-      body: JSON.stringify({ sessionId, message, history, scaleAnswer }),
+      body: JSON.stringify({ sessionId, message, history, scaleAnswer, persona }),
     })
   }
 
   // ── 量表答题提交 ────────────────────────────────────────────
-  async function submitScaleAnswer(sessionId, theme, answers) {
-    return sendMessage(sessionId, '', [], { theme, answers })
+  async function submitScaleAnswer(sessionId, theme, answers, persona = null) {
+    return sendMessage(sessionId, '__scale_answer__', [], { theme, answers }, persona)
   }
 
   // ── 分析才干结果 POST /api/analyze ──────────────────────────
@@ -93,7 +93,7 @@ export function useApi() {
   }
 
   // ── 语音合成 POST /api/tts ──────────────────────────────────
-  async function synthesizeSpeech(text) {
+  async function synthesizeSpeech(text, voiceId = null) {
     if (isDemoMode) {
       await simulateDelay(300)
       return { data: null, error: null }
@@ -102,7 +102,7 @@ export function useApi() {
       const response = await fetch('/api/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, voiceId }),
       })
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}))

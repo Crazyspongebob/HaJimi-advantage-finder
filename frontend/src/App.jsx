@@ -8,8 +8,6 @@ import ChatAssessmentPage from './pages/ChatAssessmentPage'
 import ResultsPage from './pages/ResultsPage'
 import DomainSelectionPage from './pages/DomainSelectionPage'
 import JobRecommendationPage from './pages/JobRecommendationPage'
-import DemoModeButton from './components/DemoModeButton'
-
 function App() {
   return (
     // 演示模式 Provider 包裹最外层
@@ -32,9 +30,6 @@ function App() {
               {/* 未匹配路径重定向到首页 */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-
-            {/* 浮动演示模式按钮 - 所有页面都显示 */}
-            <DemoModeButton />
           </div>
         </BrowserRouter>
       </ChatProvider>

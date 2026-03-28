@@ -4,13 +4,31 @@ import { useNavigate } from 'react-router-dom'
 import { useChatContext, ActionTypes } from '../context/ChatContext'
 import { useDemoMode } from '../context/DemoModeContext'
 import { useApi } from '../hooks/useApi'
+import { demoUserMessages } from '../utils/mockData'
 import CatAvatar from '../components/CatAvatar'
 import TypingIndicator from '../components/TypingIndicator'
 import VoiceButton from '../components/VoiceButton'
 import LikertScaleCard from '../components/LikertScaleCard'
 
 const ERROR_MSG = '哈基米猫粮吃撑了，正在打嗝，稍等喵~ 😅'
-const MIN_ROUNDS_SHOW_BUTTONS = 5  // 第5轮起显示行动按钮
+
+// ── 人设/音色持久化 ───────────────────────────────────────────
+const PERSONA_STORAGE_KEY = 'hakimi_persona_settings'
+const VOICE_OPTIONS = [
+  { id: 'qiaopi_mengmei',                         label: '俏皮萌妹（默认）' },
+  { id: 'female-shaonv',                          label: '少女音色' },
+  { id: 'female-yujie',                           label: '御姐音色' },
+  { id: 'female-tianmei',                         label: '甜美女性' },
+  { id: 'male-qn-jingying',                       label: '精英青年' },
+  { id: 'Chinese (Mandarin)_Gentleman',            label: '温润男声' },
+  { id: 'Chinese (Mandarin)_Radio_Host',           label: '电台男主播' },
+]
+function loadPersona() {
+  try { return JSON.parse(localStorage.getItem(PERSONA_STORAGE_KEY)) || {} } catch { return {} }
+}
+function savePersona(p) {
+  localStorage.setItem(PERSONA_STORAGE_KEY, JSON.stringify(p))
+}
 
 let _audio = null
 function playAudio(url) {
@@ -21,6 +39,30 @@ function playAudio(url) {
 }
 
 // ── 小组件 ───────────────────────────────────────────────────
+
+function renderMarkdown(text) {
+  if (!text) return null
+  // Convert **bold**, *italic*, and line breaks to JSX
+  const lines = text.split('\n')
+  return lines.map((line, li) => {
+    // Process inline bold/italic
+    const parts = []
+    let remaining = line
+    let key = 0
+    const inlineRegex = /(\*\*(.+?)\*\*|\*(.+?)\*)/g
+    let lastIndex = 0
+    let match
+    while ((match = inlineRegex.exec(line)) !== null) {
+      if (match.index > lastIndex) parts.push(<span key={key++}>{line.slice(lastIndex, match.index)}</span>)
+      if (match[0].startsWith('**')) parts.push(<strong key={key++}>{match[2]}</strong>)
+      else parts.push(<em key={key++}>{match[3]}</em>)
+      lastIndex = match.index + match[0].length
+    }
+    if (lastIndex < line.length) parts.push(<span key={key++}>{line.slice(lastIndex)}</span>)
+    const content = parts.length > 0 ? parts : [line]
+    return <span key={li}>{content}{li < lines.length - 1 ? <br /> : null}</span>
+  })
+}
 
 function ModeTag({ mode, themeZh }) {
   if (!themeZh) return null
@@ -68,7 +110,7 @@ function MessageBubble({ message, onTTS }) {
           <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(201,168,76,0.1)', color: 'rgba(201,168,76,0.7)' }}>话题已跳过</span>
         )}
         <div className="px-4 py-3 rounded-2xl text-sm leading-relaxed" style={{
-          whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+          wordBreak: 'break-word',
           ...(isUser ? {
             background: 'linear-gradient(135deg, #C9A84C 0%, #D4B46A 50%, #B8960C 100%)',
             color: '#0F172A', borderBottomRightRadius: '4px',
@@ -78,7 +120,7 @@ function MessageBubble({ message, onTTS }) {
             boxShadow: '0 1px 4px rgba(15,23,42,0.06)', borderLeft: '2px solid rgba(201,168,76,0.3)',
           }),
         }}>
-          {message.content}
+          {isUser ? message.content : renderMarkdown(message.content)}
         </div>
         {!isUser && (
           <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 px-1">
@@ -151,12 +193,59 @@ export default function ChatAssessmentPage() {
   const [scaleSubmitting, setScaleSubmitting] = useState(false)
   const [roundCount, setRoundCount] = useState(0)
   const [showActionButtons, setShowActionButtons] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const [settingsSaved, setSettingsSaved] = useState(false)
+  const [persona, setPersona] = useState(() => {
+    const saved = loadPersona()
+    return {
+      name: saved.name || '哈基米',
+      description: saved.description || '一只很爱思考的猫猫',
+      voiceId: saved.voiceId || 'qiaopi_mengmei',
+    }
+  })
+  // personaRef keeps async functions (TTS, sendMessage) always reading latest persona
+  const personaRef = useRef(persona)
+  useEffect(() => { personaRef.current = persona }, [persona])
+  // voiceEnabledRef prevents stale closure in async TTS (voice toggled mid-request)
+  const voiceEnabledRef = useRef(state.voiceEnabled)
+  useEffect(() => { voiceEnabledRef.current = state.voiceEnabled }, [state.voiceEnabled])
+  const [themesExplored, setThemesExplored] = useState(0)
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
+  const voiceButtonRef = useRef(null)
+  // Fix: prevent double-init from React 18 StrictMode firing useEffect twice
+  const initCalledRef = useRef(false)
+  // Refs for spacebar handler to avoid stale closures
+  const inputDisabledRef = useRef(false)
+  const pendingScaleRef = useRef(null)
+  const prevThemeRef = useRef(null)
 
   const scrollToBottom = useCallback(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [])
   useEffect(() => { scrollToBottom() }, [state.messages, isTyping, pendingScale, showActionButtons, scrollToBottom])
-  useEffect(() => { if (state.messages.length === 0) initSession() }, []) // eslint-disable-line
+  useEffect(() => {
+    if (!initCalledRef.current && state.messages.length === 0) {
+      initCalledRef.current = true
+      initSession()
+    }
+  }, []) // eslint-disable-line
+
+  // Keep refs in sync for spacebar handler
+  useEffect(() => { inputDisabledRef.current = isTyping || state.isComplete || scaleSubmitting }, [isTyping, state.isComplete, scaleSubmitting])
+  useEffect(() => { pendingScaleRef.current = pendingScale }, [pendingScale])
+
+  // Spacebar → voice input (when textarea not focused)
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.code !== 'Space') return
+      const tag = document.activeElement?.tagName
+      if (tag === 'TEXTAREA' || tag === 'INPUT') return
+      if (inputDisabledRef.current || pendingScaleRef.current) return
+      e.preventDefault()
+      voiceButtonRef.current?.startListening()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
 
   // Auto-show action buttons when demo completes
   useEffect(() => {
@@ -164,6 +253,21 @@ export default function ChatAssessmentPage() {
       setShowActionButtons(true)
     }
   }, [isDemoMode, isDemoComplete])
+
+  // Demo mode auto-advance: after each assistant message, auto-send next demo user line
+  useEffect(() => {
+    if (!isDemoMode || isTyping || state.isComplete || pendingScale || showActionButtons) return
+    const msgs = state.messages
+    if (msgs.length === 0) return
+    const lastMsg = msgs[msgs.length - 1]
+    if (!lastMsg || lastMsg.role !== 'assistant') return
+    // Count how many user messages have been sent so far
+    const userMsgCount = msgs.filter(m => m.role === 'user').length
+    const nextUserMsg = demoUserMessages[userMsgCount] || null
+    if (!nextUserMsg) return
+    const timer = setTimeout(() => { handleSend(nextUserMsg) }, 1800)
+    return () => clearTimeout(timer)
+  }, [isDemoMode, isTyping, state.messages.length, state.isComplete, pendingScale, showActionButtons]) // eslint-disable-line
 
   // Compute avatar state
   const avatarState = isTyping ? 'thinking' : (_audio ? 'speaking' : 'idle')
@@ -180,7 +284,7 @@ export default function ChatAssessmentPage() {
     }
     if (data.skipDetected != null) dispatch({ type: ActionTypes.SET_SKIP_DETECTED, payload: data.skipDetected })
     if (data.mode === 'B' && data.scaleQuestions?.length > 0) {
-      setPendingScale({ questions: data.scaleQuestions, theme: data.currentTheme, themeZh: data.currentThemeZh || data.currentTheme })
+      setPendingScale({ questions: data.scaleQuestions, reverseIndices: data.reverseIndices || [], theme: data.currentTheme, themeZh: data.currentThemeZh || data.currentTheme })
     }
 
     // Track round count
@@ -188,8 +292,14 @@ export default function ChatAssessmentPage() {
       setRoundCount(data.roundCount)
     }
 
-    // Show action buttons when ready
-    if (data.readyForReport || data.isComplete || (data.roundCount >= MIN_ROUNDS_SHOW_BUTTONS)) {
+    // Track themes explored
+    if (data.currentTheme && data.currentTheme !== prevThemeRef.current) {
+      prevThemeRef.current = data.currentTheme
+      setThemesExplored(n => n + 1)
+    }
+
+    // Show action buttons after 5 rounds OR when AI explicitly signals readiness
+    if (data.readyForReport || data.isComplete || (data.roundCount >= 5)) {
       setShowActionButtons(true)
     }
     // Demo: auto prompt
@@ -198,18 +308,49 @@ export default function ChatAssessmentPage() {
     }
 
     if (data.isComplete) dispatch({ type: ActionTypes.SET_COMPLETE, payload: true })
-    if (state.voiceEnabled && data.reply) handleTTSPlay(data.reply)
+    if (voiceEnabledRef.current && data.reply) handleTTSPlay(data.reply)
   }
 
   async function handleTTSPlay(text) {
-    const t = text.length > 250 ? text.slice(0, 250) : text
-    const { data } = await synthesizeSpeech(t)
-    if (data?.audioUrl) playAudio(data.audioUrl)
+    if (!text) return
+    // Split into chunks ≤200 chars on sentence boundaries
+    const MAX_CHUNK = 200
+    const sentenceEnds = /[。！？!?\.]+/g
+    const chunks = []
+    let start = 0
+    let match
+    while ((match = sentenceEnds.exec(text)) !== null) {
+      const end = match.index + match[0].length
+      if (end - start >= MAX_CHUNK || end >= text.length - 1) {
+        const chunk = text.slice(start, end).trim()
+        if (chunk) chunks.push(chunk)
+        start = end
+      }
+    }
+    if (start < text.length) {
+      const last = text.slice(start).trim()
+      if (last) chunks.push(last)
+    }
+    if (chunks.length === 0) chunks.push(text.slice(0, MAX_CHUNK))
+    // Play first chunk immediately, queue rest
+    for (const chunk of chunks) {
+      if (!voiceEnabledRef.current) break
+      const { data } = await synthesizeSpeech(chunk, personaRef.current.voiceId)
+      if (data?.audioUrl) {
+        await new Promise(resolve => {
+          if (_audio) { _audio.pause(); _audio = null }
+          _audio = new Audio(data.audioUrl)
+          _audio.onended = () => { _audio = null; resolve() }
+          _audio.onerror = () => { _audio = null; resolve() }
+          _audio.play().catch(() => resolve())
+        })
+      }
+    }
   }
 
   async function initSession() {
     setIsTyping(true)
-    const { data, error } = await sendMessage(state.sessionId, '', [])
+    const { data, error } = await sendMessage(state.sessionId, '', [], null, persona)
     setIsTyping(false)
     if (error) { dispatch({ type: ActionTypes.SET_ERROR, payload: error }); dispatch({ type: ActionTypes.ADD_MESSAGE, payload: { role: 'assistant', content: ERROR_MSG } }); return }
     if (data) { dispatch({ type: ActionTypes.ADD_MESSAGE, payload: { role: 'assistant', content: data.reply } }); processResponse(data) }
@@ -222,7 +363,7 @@ export default function ChatAssessmentPage() {
     setInputValue('')
     setIsTyping(true)
     const history = [...state.messages, { role: 'user', content: text }]
-    const { data, error } = await sendMessage(state.sessionId, text, history)
+    const { data, error } = await sendMessage(state.sessionId, text, history, null, personaRef.current)
     setIsTyping(false)
     if (error) { dispatch({ type: ActionTypes.SET_ERROR, payload: error }); dispatch({ type: ActionTypes.ADD_MESSAGE, payload: { role: 'assistant', content: ERROR_MSG } }); return }
     if (data) { dispatch({ type: ActionTypes.ADD_MESSAGE, payload: { role: 'assistant', content: data.reply, skipDetected: data.skipDetected } }); processResponse(data) }
@@ -258,7 +399,7 @@ export default function ChatAssessmentPage() {
     setScaleSubmitting(true); setPendingScale(null)
     dispatch({ type: ActionTypes.ADD_MESSAGE, payload: { role: 'user', content: `[量表评分] ${themeZh}：${answers.join('、')} 分` } })
     setIsTyping(true)
-    const { data, error } = await submitScaleAnswer(state.sessionId, theme, answers)
+    const { data, error } = await submitScaleAnswer(state.sessionId, theme, answers, personaRef.current)
     setIsTyping(false); setScaleSubmitting(false)
     if (error) { dispatch({ type: ActionTypes.SET_ERROR, payload: error }); dispatch({ type: ActionTypes.ADD_MESSAGE, payload: { role: 'assistant', content: ERROR_MSG } }); return }
     if (data) { dispatch({ type: ActionTypes.ADD_MESSAGE, payload: { role: 'assistant', content: data.reply } }); processResponse(data) }
@@ -288,7 +429,7 @@ export default function ChatAssessmentPage() {
           <CatAvatar size="sm" avatarState={avatarState} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h1 className="font-bold text-sm sm:text-base truncate" style={{ color: '#FAFAF8', fontFamily: "'Noto Serif SC', serif" }}>哈基米优势发现器</h1>
+              <h1 className="font-bold text-sm sm:text-base truncate" style={{ color: '#FAFAF8', fontFamily: "'Noto Serif SC', serif" }}>{persona.name} · 优势发现器</h1>
               {isDemoMode && (
                 <span className="text-xs px-2 py-0.5 rounded-full font-semibold flex-shrink-0"
                   style={{ background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.3)', color: '#a78bfa' }}>
@@ -303,15 +444,26 @@ export default function ChatAssessmentPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {/* Demo mode toggle */}
-            <button
-              onClick={() => { resetDemo(); toggleDemoMode(); if (isDemoMode) { dispatch({ type: ActionTypes.RESET_SESSION }); setTimeout(initSession, 50) } }}
-              title={isDemoMode ? '退出演示模式' : '开启演示模式（无需后端）'}
-              className="w-8 h-8 rounded-full flex items-center justify-center transition-all text-sm"
-              style={{ background: isDemoMode ? 'rgba(139,92,246,0.2)' : 'rgba(255,255,255,0.04)', border: isDemoMode ? '1px solid rgba(139,92,246,0.4)' : '1px solid rgba(255,255,255,0.08)' }}>
-              🎭
+            {/* Voice settings */}
+            <button onClick={() => setShowSettings(true)} title="切换音色"
+              className="flex items-center gap-1 px-2.5 h-8 rounded-full transition-all text-xs font-medium"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}>
+              🎵 音色
             </button>
-            <button onClick={() => dispatch({ type: ActionTypes.TOGGLE_VOICE })}
+            {/* Demo mode: only show exit button if currently in demo mode */}
+            {isDemoMode && (
+              <button
+                onClick={() => { resetDemo(); toggleDemoMode(); dispatch({ type: ActionTypes.RESET_SESSION }); setTimeout(initSession, 50) }}
+                title="退出演示模式"
+                className="flex items-center gap-1 px-2 h-8 rounded-full transition-all text-xs"
+                style={{ background: 'rgba(139,92,246,0.2)', border: '1px solid rgba(139,92,246,0.4)', color: '#a78bfa' }}>
+                🎭 退出演示
+              </button>
+            )}
+            <button onClick={() => {
+              if (voiceEnabled && _audio) { _audio.pause(); _audio = null }
+              dispatch({ type: ActionTypes.TOGGLE_VOICE })
+            }}
               title={voiceEnabled ? '关闭语音播报' : '开启语音播报'}
               className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
               style={{ background: voiceEnabled ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.06)', border: voiceEnabled ? '1px solid rgba(201,168,76,0.4)' : '1px solid rgba(255,255,255,0.1)', color: voiceEnabled ? '#C9A84C' : 'rgba(255,255,255,0.3)' }}>
@@ -351,8 +503,9 @@ export default function ChatAssessmentPage() {
           ))}
           {pendingScale && (
             <div className="py-1">
-              <LikertScaleCard questions={pendingScale.questions} themeName={pendingScale.themeZh}
-                themeEn={pendingScale.theme} onSubmit={handleScaleSubmit} onSkip={handleScaleSkip} disabled={scaleSubmitting} />
+              <LikertScaleCard questions={pendingScale.questions} reverseIndices={pendingScale.reverseIndices || []}
+                themeName={pendingScale.themeZh} themeEn={pendingScale.theme}
+                onSubmit={handleScaleSubmit} onSkip={handleScaleSkip} disabled={scaleSubmitting} />
             </div>
           )}
           {isTyping && <TypingIndicator />}
@@ -380,7 +533,7 @@ export default function ChatAssessmentPage() {
 
         {/* ── Input ──────────────────────────────────────────── */}
         <div className="flex-shrink-0 px-4 py-3 pb-safe" style={{ background: '#FFFFFF', borderTop: '1px solid rgba(15,23,42,0.08)' }}>
-          {!isComplete && !pendingScale && state.messages.length > 2 && !buttonsVisible && (
+          {!isComplete && !pendingScale && state.messages.length > 2 && (
             <div className="flex justify-end gap-2 mb-2 flex-wrap">
               <button onClick={handleSkip} disabled={inputDisabled} className="text-xs px-3 py-1.5 rounded-full transition-all hover:scale-105"
                 style={{ background: 'rgba(15,23,42,0.05)', border: '1px solid rgba(15,23,42,0.1)', color: 'rgba(15,23,42,0.5)', cursor: inputDisabled ? 'not-allowed' : 'pointer' }}>
@@ -395,7 +548,7 @@ export default function ChatAssessmentPage() {
             </div>
           )}
           <div className="flex items-end gap-2 max-w-2xl mx-auto">
-            <VoiceButton onResult={handleVoiceResult} disabled={inputDisabled || !!pendingScale} />
+            <VoiceButton ref={voiceButtonRef} onResult={handleVoiceResult} disabled={inputDisabled || !!pendingScale} />
             <textarea ref={inputRef} value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={handleKeyDown}
               placeholder={pendingScale ? '请先完成量表评分...' : isComplete ? '对话已完成' : '和哈基米聊聊... 说「换一个」跳过话题'}
               disabled={inputDisabled} rows={1}
@@ -417,7 +570,7 @@ export default function ChatAssessmentPage() {
             </button>
           </div>
           <p className="text-xs text-center mt-2" style={{ color: 'rgba(15,23,42,0.3)' }}>
-            Enter 发送 · 🎤 语音输入 · 说「换一个」跳过话题
+            Enter 发送 · 空格键/🎤 语音输入 · 说「换一个」跳过话题
           </p>
         </div>
       </div>
@@ -429,7 +582,7 @@ export default function ChatAssessmentPage() {
         {/* 大头像区 */}
         <div className="flex flex-col items-center pt-8 pb-6 px-5" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
           <CatAvatar size="lg" avatarState={avatarState} className="mb-4" />
-          <h2 className="font-bold text-base" style={{ color: '#FAFAF8', fontFamily: "'Noto Serif SC', serif" }}>哈基米</h2>
+          <h2 className="font-bold text-base" style={{ color: '#FAFAF8', fontFamily: "'Noto Serif SC', serif" }}>{persona.name}</h2>
           <p className="text-xs mt-0.5" style={{ color: 'rgba(201,168,76,0.6)' }}>
             {avatarState === 'thinking' ? '正在思考...' : avatarState === 'speaking' ? '正在播报...' : '才干探测中'}
           </p>
@@ -451,6 +604,18 @@ export default function ChatAssessmentPage() {
             </div>
           )}
 
+          {themesExplored > 0 && (
+            <div className="mb-4">
+              <div className="flex justify-between items-center mb-1.5">
+                <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.6)' }}>已探索才干</span>
+                <span className="text-xs tabular-nums" style={{ color: '#C9A84C' }}>{themesExplored}/34</span>
+              </div>
+              <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                <div className="h-full rounded-full transition-all duration-700 ease-out" style={{ width: `${Math.min(100, (themesExplored/34)*100)}%`, background: 'linear-gradient(90deg, #8b5cf6, #C9A84C)' }} />
+              </div>
+            </div>
+          )}
+
           <div className="space-y-5">
             {progressItems.map(item => (
               <div key={item.key}>
@@ -465,7 +630,7 @@ export default function ChatAssessmentPage() {
             ))}
           </div>
 
-          {/* 辅助操作按钮 */}
+          {/* 辅助操作按钮 — visible until conversation is fully complete */}
           {!isComplete && state.messages.length > 2 && (
             <div className="mt-5 space-y-1.5">
               <button onClick={handleSkip} disabled={inputDisabled} className="w-full py-1.5 rounded-lg text-xs transition-all"
@@ -506,6 +671,62 @@ export default function ChatAssessmentPage() {
           <p className="text-xs text-center" style={{ color: 'rgba(255,255,255,0.2)' }}>盖洛普 34 才干 · 双模式探测<br/>闲聊 + 量表 融合分析</p>
         </div>
       </aside>
+
+      {/* ── 人设设置 Modal ────────────────────────────────── */}
+      {showSettings && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+          onClick={e => { if (e.target === e.currentTarget) setShowSettings(false) }}>
+          <div className="w-full max-w-sm rounded-2xl overflow-hidden"
+            style={{ background: '#1E293B', border: '1px solid rgba(201,168,76,0.2)', boxShadow: '0 24px 60px rgba(0,0,0,0.5)' }}>
+            {/* Modal header */}
+            <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <h3 className="font-bold text-base" style={{ color: '#FAFAF8', fontFamily: "'Noto Serif SC', serif" }}>🎵 语音音色</h3>
+              <button onClick={() => setShowSettings(false)} style={{ color: 'rgba(255,255,255,0.4)' }}>✕</button>
+            </div>
+            {/* Modal body */}
+            <div className="px-5 py-4">
+              <div className="space-y-2">
+                {VOICE_OPTIONS.map(v => (
+                  <button key={v.id} onClick={() => setPersona(p => ({ ...p, voiceId: v.id }))}
+                    className="w-full px-4 py-3 rounded-xl text-sm text-left flex items-center gap-3 transition-all"
+                    style={{
+                      background: persona.voiceId === v.id ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.04)',
+                      border: persona.voiceId === v.id ? '1.5px solid rgba(201,168,76,0.5)' : '1px solid rgba(255,255,255,0.08)',
+                      color: persona.voiceId === v.id ? '#E2C97E' : 'rgba(255,255,255,0.7)',
+                    }}>
+                    <span style={{ fontSize: '18px' }}>🔊</span>
+                    <span className="font-medium">{v.label}</span>
+                    {persona.voiceId === v.id && <span className="ml-auto text-xs" style={{ color: '#C9A84C' }}>✓ 当前</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* Modal footer */}
+            <div className="px-5 pb-5">
+              <button onClick={() => {
+                savePersona(persona)
+                personaRef.current = persona
+                setShowSettings(false)
+                setSettingsSaved(true)
+                setTimeout(() => setSettingsSaved(false), 2500)
+              }}
+                className="w-full py-2.5 rounded-xl text-sm font-bold"
+                style={{ background: 'linear-gradient(135deg, #C9A84C, #B8960C)', color: '#0F172A' }}>
+                确认音色
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 设置保存提示 ─────────────────────────────────── */}
+      {settingsSaved && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full text-sm font-medium shadow-lg"
+          style={{ background: 'rgba(201,168,76,0.95)', color: '#0F172A', backdropFilter: 'blur(8px)' }}>
+          ✓ 音色已切换
+        </div>
+      )}
 
       {/* ── 移动端底部行动浮层 ────────────────────────────── */}
       {buttonsVisible && (

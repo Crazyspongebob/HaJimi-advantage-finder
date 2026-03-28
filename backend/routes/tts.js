@@ -12,7 +12,7 @@ const ttsService = require('../services/ttsService');
  */
 router.post('/', async (req, res, next) => {
   try {
-    const { text } = req.body;
+    const { text, voiceId } = req.body;
 
     if (!text || typeof text !== 'string') {
       return res.status(400).json({ error: '请提供要合成的文字' });
@@ -26,7 +26,7 @@ router.post('/', async (req, res, next) => {
       ? truncatedText + ' 哈基米喜欢你喵~'
       : truncatedText;
 
-    const audioBuffer = await ttsService.synthesize(finalText);
+    const audioBuffer = await ttsService.synthesize(finalText, voiceId || null);
 
     // 返回 MP3 音频
     res.set({

@@ -18,13 +18,13 @@ async function getFetch() {
  * @returns {Promise<Buffer>} - MP3音频数据的Buffer
  * @throws {Error} - API调用失败或配置错误时抛出异常
  */
-async function synthesize(text) {
+async function synthesize(text, voiceIdOverride = null) {
   const fetch = await getFetch();
 
   // 检查必要的环境变量
   const apiKey = process.env.AIPING_API_KEY;
   const ttsUrl = process.env.AIPING_TTS_URL || 'https://aiping.cn/api/v1/audio/speech';
-  const voiceId = process.env.AIPING_VOICE_ID || 'female-shaonv';
+  const voiceId = voiceIdOverride || process.env.AIPING_VOICE_ID || 'qiaopi_mengmei';
   const ttsModel = process.env.AIPING_TTS_MODEL || 'MiniMax-Speech-2.8-hd';
 
   if (!apiKey) {

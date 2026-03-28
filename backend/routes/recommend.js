@@ -100,8 +100,20 @@ ${talentSummary}${domainPreference}
 
     console.log(`[Recommend] 开始生成职业推荐，天赋数量: ${topTalents.length}`);
 
-    // 调用LLM生成推荐
-    const llmResponse = await llmService.chat(messages, RECOMMEND_SYSTEM_PROMPT);
+    // 调用LLM生成推荐（主模型失败时自动回退到 llm-default）
+    const primaryModel = process.env.CHAT_LLM_MODEL || 'kimi-k2-5';
+    const fallbackModel = process.env.CHAT_LLM_FALLBACK || 'llm-default';
+    let llmResponse;
+    try {
+      llmResponse = await llmService.chatWithFallback(messages, RECOMMEND_SYSTEM_PROMPT, primaryModel, fallbackModel);
+    } catch (llmErr) {
+      console.error('[Recommend] LLM调用失败:', llmErr.message);
+      return res.status(200).json({
+        jobs: [],
+        error: 'AI服务暂时不可用，请稍后重试',
+        detail: llmErr.message,
+      });
+    }
 
     // 解析JSON响应
     let recommendResult;

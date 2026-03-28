@@ -24,7 +24,7 @@ const initialState = {
   currentTheme: null,       // 当前正在探测的才干主题 (英文, e.g. 'Achiever')
   currentThemeZh: null,     // 才干主题中文名
   scaleQuestions: [],       // Mode B 量表问题列表
-  voiceEnabled: false,      // 是否开启语音自动播放
+  voiceEnabled: true,       // 是否开启语音自动播放（默认开启）
   skipDetected: false,      // 最近一次是否触发了跳过
 }
 

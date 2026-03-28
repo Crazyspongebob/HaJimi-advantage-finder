@@ -3,3 +3,7 @@ dist/
 .env
 *.log
 .DS_Store
+
+# 私密数据 — 不入库
+backend/data/sessions.json
+backend/data/*.json

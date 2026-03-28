@@ -15,6 +15,7 @@ import DomainMap from '../components/DomainMap'
 import ToolkitPanel from '../components/ToolkitPanel'
 import Skeleton from '../components/Skeleton'
 
+
 // 分析加载 Overlay
 function AnalysisOverlay({ onComplete }) {
   const [progress, setProgress] = useState(0)
@@ -77,7 +78,7 @@ function CertStamp({ sessionId }) {
         <div style={{ fontSize: '20px', lineHeight: 1 }}>🐾</div>
         <div className="font-bold mt-0.5" style={{ color: '#C9A84C', fontSize: '7px', letterSpacing: '0.1em' }}>认证</div>
         <div style={{ color: 'rgba(201,168,76,0.65)', fontSize: '6px', marginTop: '2px', letterSpacing: '0.05em' }}>{dateStr}</div>
-        <div style={{ color: 'rgba(201,168,76,0.4)', fontSize: '5.5px', marginTop: '1px', fontFamily: 'monospace' }}>#{idStr.slice(0,6)}</div>
+        <div style={{ color: 'rgba(201,168,76,0.4)', fontSize: '5.5px', marginTop: '1px', fontFamily: 'monospace' }}>#{idStr.slice(0, 6)}</div>
       </div>
     </div>
   )
@@ -150,6 +151,7 @@ function TalentDNACard({ talentDNA, crossDomainInsight }) {
     </div>
   )
 }
+
 
 function ResultsPage() {
   const navigate = useNavigate()
@@ -245,7 +247,7 @@ function ResultsPage() {
               <Divider label="Top 5 签名才干" />
               <div className="space-y-3 mt-4">
                 {!hasResults ? (
-                  [1,2,3,4,5].map(i => <Skeleton key={i} height="h-20" className="rounded-2xl" />)
+                  [1, 2, 3, 4, 5].map(i => <Skeleton key={i} height="h-20" className="rounded-2xl" />)
                 ) : (
                   themes.map((theme, i) => (
                     <ThemeCard key={theme.rank || i} theme={theme} defaultExpanded={i === 0} />

@@ -14,6 +14,16 @@ export const hakimiQuotes = [
   '猫有九条命，你有无限可能！先来发现你最闪耀的那个才干吧！',
 ]
 
+// ── 演示模式：自动发送的用户消息（与 demoConversation 轮次对应）────────
+// demoConversation[0] = greeting (no user msg needed)
+// demoConversation[1] triggered by demoUserMessages[0], etc.
+export const demoUserMessages = [
+  '我是本科生',
+  '最近在帮同学整理一个项目方案，把那些乱七八糟的需求梳理得很清楚，大家一下子就明白了',
+  '我更关注当下把事情搞定的那种满足感，过去的事情不太会纠结',
+  '我会先耐心听完他说完，然后再帮他理清思路、给建议',
+]
+
 // ── 演示对话：4轮，带信号标签 ───────────────────────────────
 
 export const demoConversation = [
